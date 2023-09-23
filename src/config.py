@@ -13,7 +13,8 @@ cfg_tuple = (
     "holder_cookie",
     "uploader_cookie",
     "discord_webhook",
-    "discord_bot_token"
+    "discord_bot_token",
+    "discord_bot_prefix"
 )
 
 if not os.path.isfile("src/cache/config.json"):
@@ -28,9 +29,9 @@ def get(requested_item) -> str | int:
     :return: 
     :rtype str | int:
     """
+
     if requested_item.lower() in cfg_tuple:
         item = os.environ.get(requested_item.upper())
-
         if item:
             if item.isnumeric():
                 return int(item)

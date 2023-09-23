@@ -34,3 +34,10 @@ class LowRankException(Exception):
     """
 
     pass
+
+class InvalidAssetId(Exception):
+    """ 
+    Raised if the asset ID provided is invalid
+    """
+
+    pass

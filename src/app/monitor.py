@@ -1,13 +1,14 @@
 import requests
 import time, random
 
-from typing         import Optional,Dict,List
+from typing             import Optional,Dict,List
 
-from src.utils      import log
-from src.clients    import accounts
-from src.exceptions import InvalidCredentialsError, AccountNotInGroup, LowRankException
-from src            import config
-from src.adapters   import webhooks
+from src.utils          import log
+from src.utils.currency import robux_price
+from src.clients        import accounts
+from src.exceptions     import InvalidCredentialsError, AccountNotInGroup, LowRankException
+from src                import config
+from src.adapters       import webhooks
 
 
 
@@ -74,6 +75,8 @@ class Monitor:
                         return 
 
                     #TODO: Recode this
+                    rates = config.cfg_get("rates") or 3.5
+
                     robuxAT = sale['currency']['amount']
                     robuxBT = sale['currency']['bt_amount'] = robuxAT / 0.7 
 
@@ -99,12 +102,15 @@ class Monitor:
                                     "fields":[
                                         {"name":"Player","value":f"**Username: [{sale['agent']['name']}](https://www.roblox.com/users/{sale['agent']['id']}/profile)**\n**User ID: {str(sale['agent']['id'])}**"},
                                         {"name":"Item","value":f"**[{sale['details']['name']}](https://www.roblox.com/catalog/{str(sale['details']['id'])})**"},
-                                        {"name":"Amount","value":f"**A/T: {robuxAT}**\n**B/T: {round(robuxBT)}**"}
+                                        {"name":"Amount","value":f"**A/T: {robuxAT} (${robux_price(robuxAT,rates)})**\n**B/T: {round(robuxBT)} (${robux_price(robuxBT, rates)})**"}
                                     ],
                                     "thumbnail":{
                                         "url": player_headshot,
                                         "proxy_url":player_headshot,
-                                    }
+                                    },
+                                    "footer":{
+                                        "text":f"Currency converted using rates: ${rates} / 1k (2DP)"
+                                    },
                                 }
                             ]
                         })

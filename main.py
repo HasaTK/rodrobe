@@ -1,7 +1,8 @@
-from src.app    import monitor
-from src.utils  import log
-from src        import config
+import asyncio
 
+from src.app        import monitor
+from src.utils      import log
+from src            import config
 
 def main():
     """
@@ -10,6 +11,7 @@ def main():
     
     log.info("Starting program..")
 
+
     newMonitor = monitor.Monitor(
         holder_cookie   = config.get("holder_cookie"),
         uploader_cookie = config.get("uploader_cookie"),
@@ -17,6 +19,9 @@ def main():
     )
 
     newMonitor.load()
+
+    
+
 
 if __name__ == "__main__":
     main()

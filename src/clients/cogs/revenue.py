@@ -31,8 +31,8 @@ class revenue(commands.Cog):
         total_robux    = verified_robux + pending_robux
 
         embedBuild = discord.Embed(
-            title = f"{group_info['name']} Overview",
-            description = f"**Verified Robux:** {verified_robux} (${robux_price(verified_robux,rates)})\n**Pending Robux:** {group_summary['pending_robux']} (${robux_price(pending_robux,rates)})\n**Total(Pending + Verified):** {total_robux} (${robux_price(verified_robux,rates)})",
+            title = f"{group_info['name']} Balance",
+            description = f"**Verified Robux:** {verified_robux} (${robux_price(verified_robux,rates)})\n**Pending Robux:** {group_summary['pending_robux']} (${robux_price(pending_robux,rates)})\n**Total(Pending + Verified):** {total_robux} (${robux_price(total_robux,rates)})",
             color = 0x0cb994
         )
 

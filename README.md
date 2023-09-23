@@ -1,10 +1,17 @@
-# Roblox Clothing Bot
+# Roblox Clothing Bot (WIP)
+A roblox clothing bot for discord.
 
-A multipurpose roblox group monitor/ clothing bot which can increase ones robux income drastically if used correctly.
+## Features
+  - Auto robux to USD converter with configurable rates
+  - Roblox clothing downloader
+   - Sales notifier
+  - Group Balance viewer
 
 ## TODO:
-- Feature to download clothes
-- Create a discord bot with commands
+- Add discord bot loader to main.py
+- Add watermark remover 
+- Add item stealing and mass group downloader
 - Add other platforms to the sales notifier 
+- Help command
 - Add more clothing/group configurable functions(e.g set price of all/specific clothing, etc..)
 - Ratelimit handler

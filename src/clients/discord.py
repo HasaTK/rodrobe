@@ -10,7 +10,7 @@ intents.message_content = True
 
 client = commands.Bot(
     intents=intents,
-    command_prefix="!"
+    command_prefix=config.get("discord_bot_prefix")
 )
 
 async def loadCogs():
@@ -23,11 +23,13 @@ async def loadCogs():
             await client.load_extension(f"src.clients.cogs.{file[:-3]}")
 
 
+# DEBUG
 @client.event
 async def on_command_error(ctx, error):
     log.error(error,"bot_command_error")
+
 async def main():
-    log.info("Starting discord bot","bot")
+    log.info("Starting discord bot")
     await loadCogs()
     await client.start(config.get("discord_bot_token"))
 
