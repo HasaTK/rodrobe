@@ -15,8 +15,6 @@ def robux_price(robux: int, rate: int) -> float:
     :param int rate:
 
     :return: float
-
-    
     """
     
     if float(rate).is_integer():

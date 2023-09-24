@@ -79,14 +79,13 @@ def stripAssetWatermark(asset_id: int):
     if asset_type in ("shirt","pants"):
         template = Image.open(f"src/cache/templates/{asset_type}.png")
     else:
-        log.error("Asset type not supported",__name__)
-        return 
+        return False
     
     
     asset.paste(template, (0,0), mask = template)
     res_name = "src/cache/STRIP-"+sha256(str(uuid.uuid4()).encode("utf-8")).hexdigest()+".png"
     asset.save(res_name)
-    
+
     # Will use the file for something later
     os.remove(file_name)
     return res_name

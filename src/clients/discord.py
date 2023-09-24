@@ -10,7 +10,8 @@ intents.message_content = True
 
 client = commands.Bot(
     intents=intents,
-    command_prefix=config.get("discord_bot_prefix")
+    command_prefix=config.get("discord_bot_prefix"),
+    help_command=None
 )
 
 async def loadCogs():
@@ -23,10 +24,18 @@ async def loadCogs():
             await client.load_extension(f"src.clients.cogs.{file[:-3]}")
 
 
-# DEBUG
 @client.event
 async def on_command_error(ctx, error):
-    log.error(error,"bot_command_error")
+    if isinstance(error, commands.MissingRequiredArgument):
+       
+        embed = discord.Embed(
+            title = "Missing arguments",
+            color = config.EmbedColors.ERROR,
+            description = f"**Correct Usage:** `{ctx.prefix}{ctx.command.name} {ctx.command.signature}`"
+        )
+
+        await ctx.reply(embed=embed)
+
 
 async def main():
     log.info("Starting discord bot")

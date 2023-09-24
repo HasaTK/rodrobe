@@ -17,7 +17,7 @@ class revenue(commands.Cog):
     async def on_ready(self):
         log.success("Revenue cog is ready")
     
-    @commands.command(aliases=["robux","bal","balance"])
+    @commands.command(aliases=["robux","bal","balance"],help="Gives an overview of the groups revenue(conversion included)")
 
     async def revenue(self, ctx):
 

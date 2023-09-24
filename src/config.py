@@ -17,9 +17,20 @@ cfg_tuple = (
     "discord_bot_prefix"
 )
 
+cc_tuple = (
+    "rates"
+)
+
+
+class EmbedColors:
+
+    ERROR = 0xcd2934
+    SUCCESS = 0x00ff6e
+
 if not os.path.isfile("src/cache/config.json"):
     with open("src/cache/config.json","a") as file:
         json.dump({},file)
+
 
 def get(requested_item) -> str | int:
     """ 

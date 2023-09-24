@@ -11,7 +11,7 @@ class ping(commands.Cog):
     async def on_ready(self):
         log.success("Ping cog is ready")
     
-    @commands.command()
+    @commands.command(help="Testing command 🏓")
     async def ping(self, ctx):        
         await ctx.reply("Pong 🏓")
 

@@ -15,6 +15,17 @@ class DownloadView(discord.ui.View):
         button.disabled = True
         nwFile = assets.stripAssetWatermark(self.asset_id)
 
+        # just incase
+        if not nwFile:
+
+            embed = discord.Embed(
+                title="Error",
+                color=0xcd2934,
+                description="Asset type is not supported\nOnly shirts and pants can have their watermark removed."
+            )
+            await interaction.response.send_message(embed=embed,ephemeral= True) 
+            return           
+
         file = discord.File(nwFile,filename="asset.png")
         self.embed.set_image(url="attachment://asset.png")
 

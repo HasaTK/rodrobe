@@ -4,11 +4,11 @@ import os
 
 from src.utils      import log, assets
 from src.exceptions import InvalidAssetId
-
 from discord.ext    import commands 
-from hashlib        import sha256
 
-from src.utils.views import DownloadView
+from hashlib            import sha256
+from src.config         import EmbedColors
+from src.utils.views    import DownloadView
 
 
 
@@ -24,7 +24,7 @@ class Download(commands.Cog):
         log.success("Downlad cog is ready")
     
     
-    @commands.command()
+    @commands.command(help = f"Shows template of an asset")
     async def download(self, ctx, asset_id):        
         try:
 
@@ -45,7 +45,7 @@ class Download(commands.Cog):
             
             embed = discord.Embed(
                 title = "Download",
-                color=0x12d99d,
+                color=EmbedColors.SUCCESS,
                 description=embed_description
             )
 
@@ -53,7 +53,12 @@ class Download(commands.Cog):
             embed.set_image(url="attachment://asset.png")
 
             
-            await ctx.reply(embed=embed, file=file, view=DownloadView(asset_id = asset_id,embed = embed) )
+            if str(assetBytes['type']).lower()  in ('shirt','pants'):
+                view = DownloadView(asset_id = asset_id, embed = embed)
+            else:
+                view = None
+            
+            await ctx.reply(embed=embed, file=file, view = view)
 
             os.remove(f"src/cache/{file_name}")
             
