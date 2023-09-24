@@ -1,5 +1,5 @@
 # Roblox Clothing Bot (WIP)
-A roblox clothing bot for discord.
+A Work In Progress discord roblox clothing bot for your group. 
 
 ![](https://cdn.discordapp.com/attachments/1154068857879793674/1155502142161956905/image.png)
 ## Features
@@ -17,7 +17,7 @@ $ git clone https://github.com/soakingdry/roblox-clothing-bot
 $ cd roblox-clothing-bot
 $ pip3 install -r requirements.txt
 ```
-3) Open the file named `.env.example` and fill in the fields
+3) Open the file named `.env.example` and fill in the fields appropriately (example)
 ```env
 #  Account Cookies
 HOLDER_COOKIE="holder_cookie_here"
@@ -39,7 +39,6 @@ $ python3 main.py
 ```
 
 ## TODO:
-- Add discord bot loader to main.py
 - Add item stealing and mass group downloader
 - Add categorys to help command
 - Add more clothing/group configurable functions(e.g set price of all/specific clothing, etc..)

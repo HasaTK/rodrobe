@@ -1,6 +1,8 @@
 import os
 import discord 
+
 from src.utils import assets
+from src       import config
 
 class DownloadView(discord.ui.View):
 
@@ -20,7 +22,7 @@ class DownloadView(discord.ui.View):
 
             embed = discord.Embed(
                 title="Error",
-                color=0xcd2934,
+                color=config.EmbedColors.ERROR,
                 description="Asset type is not supported\nOnly shirts and pants can have their watermark removed."
             )
             await interaction.response.send_message(embed=embed,ephemeral= True) 

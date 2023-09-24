@@ -19,7 +19,7 @@ class configs(commands.Cog):
     
     @commands.command(aliases=["s"],help="Sets a config to a given value ")
     async def set(self,ctx, config_name, value): 
-        
+
         # TODO: Change this after more configs are added...
         if str(config_name).lower() == "rates" or str(config_name).lower() == "rate":
 
@@ -29,15 +29,16 @@ class configs(commands.Cog):
             
             try:
                 config.cfg_set("rates", value)
-                await ctx.reply(f"Successfully set rates to {value}")
+                
+                await ctx.reply(f"Successfully set `rates` to `{value}`")
             except Exception as e:
                 log.error(e,__name__)
-                await ctx.reply(f"Error setting rate to {value}")
+                await ctx.reply(f"Error setting rate to `{value}`")
     
     @commands.command(aliases=['g'], help="Gets the config")
-    async def get(self, ctx, cfg):
+    async def get(self, ctx, config_name):
 
-        resp = config.cfg_get(key=str(cfg))
+        resp = config.cfg_get(key=str(config_name))
         if not resp:
             embed = discord.Embed(
                 title="Error",
@@ -49,8 +50,8 @@ class configs(commands.Cog):
             return 
         
         embed = discord.Embed(
-            title = "Config found ⚙️",
-            description=f"The config `{str(cfg)}` is `{resp}`",
+            title = "Config found ",
+            description=f"The config `{str(config_name)}` is `{resp}`",
             color=config.EmbedColors.SUCCESS
         )
 

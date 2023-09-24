@@ -58,6 +58,7 @@ class Monitor:
 
         salesPage = requests.get(f"https://economy.roblox.com/v2/groups/{self.group_id}/transactions",params=params,headers=self.holder.headers)
         salesData= salesPage.json()["data"]
+        print(salesPage.status_code)
 
         if salesData[0]["id"] == self.last_cached_id:
 

@@ -1,8 +1,12 @@
+import multiprocessing
 import asyncio
 
 from src.app        import monitor
 from src.utils      import log
 from src            import config
+
+from src.clients import discord
+from multiprocessing import Process
 
 def main():
     """
@@ -18,9 +22,8 @@ def main():
         group_id        = config.get("group_id"),
     )
 
-    newMonitor.load()
-
-    
+    Process(target=newMonitor.load,args=()).start()
+    asyncio.run(discord.main())
 
 
 if __name__ == "__main__":

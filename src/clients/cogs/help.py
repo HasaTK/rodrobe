@@ -1,7 +1,9 @@
 import discord 
 import requests
+
 from src.utils      import log
 from discord.ext    import commands 
+from src            import config
 
 class Help(commands.Cog):
 
@@ -12,6 +14,8 @@ class Help(commands.Cog):
         log.success("Help cog is ready")
     
     @commands.command(help="Gives a list of all commands")
+    @commands.check(config.is_whitelisted)
+
     async def help(self, ctx):   
         description = ""
 
@@ -20,7 +24,6 @@ class Help(commands.Cog):
         
         embed = discord.Embed(
             title="Help",
-            color=0x1d201f,
             description=description
         )     
         

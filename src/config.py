@@ -32,6 +32,24 @@ if not os.path.isfile("src/cache/config.json"):
         json.dump({},file)
 
 
+def is_whitelisted(user: any):
+    """ 
+    Check if a user is allowed to use the bot
+
+    :param any user:
+    :return: bool
+    """
+
+    wl_table = os.environ.get("DISCORD_BOT_WHITELIST")
+    wl_table = json.loads(wl_table)
+
+    if type(user) == int:
+        return id in wl_table
+    else:
+        return user.author.id in wl_table
+
+
+
 def get(requested_item) -> str | int:
     """ 
     Gets the config requested

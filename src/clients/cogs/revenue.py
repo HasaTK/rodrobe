@@ -14,10 +14,12 @@ class revenue(commands.Cog):
         self.group_id = config.get("group_id")
 
     @commands.Cog.listener()
+    
     async def on_ready(self):
         log.success("Revenue cog is ready")
     
     @commands.command(aliases=["robux","bal","balance"],help="Gives an overview of the groups revenue(conversion included)")
+    @commands.check(config.is_whitelisted)
 
     async def revenue(self, ctx):
 
@@ -33,7 +35,7 @@ class revenue(commands.Cog):
         embedBuild = discord.Embed(
             title = f"{group_info['name']} Balance",
             description = f"**Verified Robux:** {verified_robux} (${robux_price(verified_robux,rates)})\n**Pending Robux:** {group_summary['pending_robux']} (${robux_price(pending_robux,rates)})\n**Total(Pending + Verified):** {total_robux} (${robux_price(total_robux,rates)})",
-            color = 0x0cb994
+            color = config.EmbedColors.SUCCESS
         )
 
         embedBuild.set_footer(text=f"Currency converted using rates: ${rates} / 1k (2DP)")
