@@ -1,7 +1,7 @@
 import colorama 
 
-from  colorama import Fore,Style
-from  typing   import Optional
+from colorama import Fore,Style
+from typing   import Optional
 
 def info(content: str, prefix: Optional[str] = "-"):
 

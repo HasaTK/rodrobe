@@ -1,5 +1,7 @@
 src/cache/* 
 !src/cache/.empty
+!src/cache/templates
+*.sample.png
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

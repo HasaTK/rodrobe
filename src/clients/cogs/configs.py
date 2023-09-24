@@ -15,7 +15,7 @@ class configs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        log.success("Ping cog is ready")
+        log.success("Configs cog is ready")
     
     @commands.command(aliases=["s"])
     async def set(self,ctx, cfg, arg): 

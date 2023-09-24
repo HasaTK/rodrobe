@@ -4,8 +4,15 @@ import os
 
 from src.utils      import log, assets
 from src.exceptions import InvalidAssetId
+
 from discord.ext    import commands 
 from hashlib        import sha256
+
+from src.utils.views import DownloadView
+
+
+
+
 
 class Download(commands.Cog):
 
@@ -16,9 +23,11 @@ class Download(commands.Cog):
     async def on_ready(self):
         log.success("Downlad cog is ready")
     
+    
     @commands.command()
     async def download(self, ctx, asset_id):        
         try:
+
             assetBytes = assets.fetchAssetBytes(asset_id=asset_id)
             file_name = sha256(str(asset_id).encode("utf-8")).hexdigest() + ".png"
             with open(f"src/cache/{file_name}","wb") as file:
@@ -42,7 +51,9 @@ class Download(commands.Cog):
 
             file = discord.File(f"src/cache/{file_name}",filename="asset.png")
             embed.set_image(url="attachment://asset.png")
-            await ctx.reply(embed=embed,file=file)
+
+            
+            await ctx.reply(embed=embed, file=file, view=DownloadView(asset_id = asset_id,embed = embed) )
 
             os.remove(f"src/cache/{file_name}")
             
@@ -51,6 +62,7 @@ class Download(commands.Cog):
         except Exception as e:
             print(e)
             await ctx.reply("Error while attempting to run command.")
+
 
 async def setup(client):
     await client.add_cog(Download(client))

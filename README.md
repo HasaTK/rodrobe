@@ -3,8 +3,9 @@ A roblox clothing bot for discord.
 
 ## Features
   - Auto robux to USD converter with configurable rates
-  - Roblox clothing downloader
-   - Sales notifier
+  - Clothing downloader
+  - Watermark Remover
+  - Sales notifier
   - Group Balance viewer
 
 ## TODO:
