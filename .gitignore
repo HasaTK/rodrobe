@@ -1,6 +1,7 @@
 src/cache/* 
 !src/cache/.empty
 !src/cache/templates
+description.txt
 *.sample.png
 # Byte-compiled / optimized / DLL files
 __pycache__/

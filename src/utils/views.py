@@ -4,6 +4,8 @@ import discord
 from src.utils import assets
 from src       import config
 
+from src.exceptions import InvalidAssetId,InvalidAssetType,AssetDetailsNotFound
+
 class DownloadView(discord.ui.View):
 
     def __init__(self, asset_id: int, embed):
@@ -15,7 +17,7 @@ class DownloadView(discord.ui.View):
     @discord.ui.button(label = "Remove Watermark", style = discord.ButtonStyle.blurple)
     async def removeWatermark(self, interaction:discord.Interaction, button:discord.ui.Button):
         button.disabled = True
-        nwFile = assets.stripAssetWatermark(self.asset_id)
+        nwFile = assets.stripAssetWatermark(self.asset_id)["file"]
 
         # just incase
         if not nwFile:
@@ -34,4 +36,4 @@ class DownloadView(discord.ui.View):
         
         await interaction.response.edit_message(view = self,embed=self.embed, attachments = [file])
         os.remove(nwFile)
-        
+    

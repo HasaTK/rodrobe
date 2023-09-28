@@ -41,3 +41,26 @@ class InvalidAssetId(Exception):
     """
 
     pass
+
+class InvalidAssetType(Exception):
+
+    """ 
+    Raised if the asset type provided is invalid
+    """
+
+    pass
+
+class AssetDetailsNotFound(Exception):
+    """ 
+    Raised if the details of an asset are not found
+    """ 
+
+    pass
+
+
+class InvalidGroupID(Exception):
+    """ 
+    Raised if group ID provided is invalid
+    """
+
+    pass

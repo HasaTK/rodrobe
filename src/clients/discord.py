@@ -36,7 +36,7 @@ async def on_command_error(ctx, error):
 
         await ctx.reply(embed=embed)
 
-
+    log.error(error,__name__)
 async def main():
     log.info("Starting discord bot")
     await loadCogs()

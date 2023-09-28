@@ -3,6 +3,8 @@ A Work In Progress discord roblox clothing bot for your group.
 
 ![](https://cdn.discordapp.com/attachments/1154068857879793674/1155502142161956905/image.png)
 ## Features
+  - Clothing uploader 
+  - Group clothing stealer
   - Auto robux to USD converter with configurable rates
   - Clothing downloader
   - Watermark Remover
@@ -33,13 +35,14 @@ DISCORD_BOT_WHITELIST=[id1,id2,id3,...]
 DISCORD_BOT_TOKEN="bot_token_here"
 ```
 4) Rename the file to `.env`
-5) Run this main.py file
+5) Create a file called `description.txt` in the `config` folder and write a description. This will be used for when the bot uploads clothing
+6) Run this main.py file
 ```console
 $ python3 main.py
 ```
 
 ## TODO:
-- Add item stealing and mass group downloader
 - Add categorys to help command
-- Add more clothing/group configurable functions(e.g set price of all/specific clothing, etc..)
+- Add tshirt_price and item_price to config
+- Add more clothing/group configurable functions
 - Ratelimit handler

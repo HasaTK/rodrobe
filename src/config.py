@@ -14,18 +14,21 @@ cfg_tuple = (
     "uploader_cookie",
     "discord_webhook",
     "discord_bot_token",
-    "discord_bot_prefix"
+    "discord_bot_prefix",
+    # These are temporary, will be moved to bot config and will be configurable by price
+    "tshirt_price", 
+    "item_price"
+
 )
 
-cc_tuple = (
-    "rates"
-)
 
 
 class EmbedColors:
 
     ERROR = 0xcd2934
     SUCCESS = 0x00ff6e
+    INFO = 0x4aafed
+
 
 if not os.path.isfile("src/cache/config.json"):
     with open("src/cache/config.json","a") as file:

@@ -23,10 +23,12 @@ def fetchAssetBytes(asset_id: int):
     asset_xml = requests.get(f"https://assetdelivery.roblox.com/v1/asset?id={asset_id}")
 
     if asset_xml.ok:
-        rId = (re.findall(r'<url>(.+?)(?=</url>)',asset_xml.text)[0]).replace("http://www.roblox.com/asset/?id=","")
+        rId = (re.findall(r'<url>(.+?)(?=</url>)',asset_xml.text)[0]).replace("http://www.roblox.com/asset/?id=","").replace("?version=1&amp;","").replace("http://www.roblox.com/asset/id=","")
         rType = re.findall(r'<string name="Name">(.+?)(?=</string>)', asset_xml.text)[0]
-
+        print(rId)
         assetData = requests.get(f"https://assetdelivery.roblox.com/v1/assetId/{rId}")
+        print(assetData.text)
+        print(assetData.url)
         fbytes = requests.get(assetData.json()["location"]).content
         return {"type":rType,"bytes":fbytes}
     else:
@@ -50,12 +52,41 @@ def getAssetDetails(asset_id: int, csrf_token: Optional[str] = "roblox"):
     )
 
     if details.status_code == 403 and "Token Validation Failed" in details.text:
-        return getAssetDetails(asset_id, details.headers["x-csrf-token"])
+        return getAssetDetails(asset_id, details.headers["x-csrf-token"]) # TODO:  cache the token and/or use sessions??
 
     elif details.ok:
         return details.json()['data'][0]
     
     return None
+
+
+def getGroupedAssetDetails(self, asset_list, csrf_token: Optional[str] = "roblox"):
+
+    """ 
+    Fetches the details of numerous assets
+
+    :param asset_list: e.g: [{"id":1,"itemType":"Asset"}, ...]
+    :param Optional csrf_token:
+
+    :return: details
+    """
+
+    headers = self.headers
+    headers["x-csrf-token"] = self.getCsrfToken()
+
+    request = requests.post(
+        "https://catalog.roblox.com/v1/catalog/items/details",
+        json = {"items":asset_list},
+        headers = self.headers
+    )
+
+    if request.ok:
+        return request.json()
+    
+    elif request.status_code == 403 and "Token Validation Failed" in request.text:
+        return getGroupedAssetDetails(asset_list=asset_list, csrf_token=request.headers["x-csrf-token"])            
+    else:
+        return False
 
 
 def stripAssetWatermark(asset_id: int):
@@ -88,4 +119,4 @@ def stripAssetWatermark(asset_id: int):
 
     # Will use the file for something later
     os.remove(file_name)
-    return res_name
+    return {"type": asset_bytes["type"],"file":res_name}
