@@ -15,11 +15,10 @@ cfg_tuple = (
     "discord_webhook",
     "discord_bot_token",
     "discord_bot_prefix",
-    # These are temporary, will be moved to bot config and will be configurable by price
-    "tshirt_price", 
+    "tshirt_price",
     "item_price"
-
 )
+
 
 
 

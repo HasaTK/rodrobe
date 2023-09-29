@@ -17,7 +17,10 @@ class configs(commands.Cog):
     async def on_ready(self):
         log.success("Configs cog is ready")
     
+
     @commands.command(aliases=["s"],help="Sets a config to a given value ")
+    @commands.check(config.is_whitelisted)
+
     async def set(self,ctx, config_name, value): 
 
         # TODO: Change this after more configs are added...
@@ -36,6 +39,8 @@ class configs(commands.Cog):
                 await ctx.reply(f"Error setting rate to `{value}`")
     
     @commands.command(aliases=['g'], help="Gets the config")
+    @commands.check(config.is_whitelisted)
+    
     async def get(self, ctx, config_name):
 
         resp = config.cfg_get(key=str(config_name))

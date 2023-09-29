@@ -121,7 +121,15 @@ class Republish(commands.Cog):
         except Exception as e:
             
             log.error(e,__name__)
-            await message.edit("An unkown error has occured, check the console for more information.")
+            embed = discord.Embed(
+                title = "Error",
+                description=f'```{e}```',
+                color= config.EmbedColors.ERROR
+        
+            )
+
+            await message.edit(embed = embed)
+                
 
 
     
@@ -129,7 +137,7 @@ class Republish(commands.Cog):
     @commands.check(config.is_whitelisted)
 
     async def sgroup(self, ctx, group_id, remove_watermark = True):
-
+        
         try: 
             group_info = groups.getGroupInfo(group_id=group_id)
         except InvalidGroupID:
@@ -140,6 +148,11 @@ class Republish(commands.Cog):
             )
 
             await ctx.reply(embed = embed)
+
+        warningEmbed = discord.Embed(
+            title = "Confirmation",
+            description=f"Are you sure you want to upload all clothing assets from group [{group_id}](https:/www.roblox.com/groups/{group_id})"
+        )
 
         uploader = accounts.RobloxAccount(config.get("uploader_cookie"))
         cached_assets = uploader.getGroupAssets(group_id=group_id)

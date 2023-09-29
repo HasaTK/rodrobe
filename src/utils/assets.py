@@ -25,10 +25,9 @@ def fetchAssetBytes(asset_id: int):
     if asset_xml.ok:
         rId = (re.findall(r'<url>(.+?)(?=</url>)',asset_xml.text)[0]).replace("http://www.roblox.com/asset/?id=","").replace("?version=1&amp;","").replace("http://www.roblox.com/asset/id=","")
         rType = re.findall(r'<string name="Name">(.+?)(?=</string>)', asset_xml.text)[0]
-        print(rId)
+
         assetData = requests.get(f"https://assetdelivery.roblox.com/v1/assetId/{rId}")
-        print(assetData.text)
-        print(assetData.url)
+
         fbytes = requests.get(assetData.json()["location"]).content
         return {"type":rType,"bytes":fbytes}
     else:

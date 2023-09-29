@@ -1,5 +1,5 @@
 # Roblox Clothing Bot (WIP)
-A Work In Progress discord roblox clothing bot for your group. 
+A discord roblox clothing bot for your group. 
 
 ![](https://cdn.discordapp.com/attachments/1154068857879793674/1155502142161956905/image.png)
 ## Features
@@ -31,8 +31,16 @@ GROUP_ID=100000
 # Discord 
 DISCORD_WEBHOOK="https://discord.com/api/webhooks/..."
 DISCORD_BOT_PREFIX="!"
+
 DISCORD_BOT_WHITELIST=[id1,id2,id3,...]
 DISCORD_BOT_TOKEN="bot_token_here"
+
+# Asset Prices
+
+# The robux price for shirts and pants which will be used when a shirt/pant is republished
+ITEM_PRICE = 5  
+# The robux price for a t-shirt which will be used when a tshirt is republished
+TSHIRT_PRICE = 3 
 ```
 4) Rename the file to `.env`
 5) Create a file called `description.txt` in the `config` folder and write a description. This will be used for when the bot uploads clothing
@@ -42,7 +50,5 @@ $ python3 main.py
 ```
 
 ## TODO:
-- Add categorys to help command
-- Add tshirt_price and item_price to config
 - Add more clothing/group configurable functions
 - Ratelimit handler

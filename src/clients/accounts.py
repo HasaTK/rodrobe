@@ -5,7 +5,7 @@ import os
 
 from src                    import config
 from src.utils              import log 
-from src.exceptions         import InvalidAssetType
+from src.exceptions         import InvalidAssetType, InsufficientFundsException
 from requests.exceptions    import JSONDecodeError
 from typing import Optional, Dict
 
@@ -204,6 +204,9 @@ class RobloxAccount():
             headers = headers
         )
 
+
+        if not release_request.ok:
+            raise Exception(release_request.text)
         return release_request
 
     def uploadGroupAsset(self, group_id: int, asset_type: str, asset_name: str, bin_file):
@@ -245,15 +248,18 @@ class RobloxAccount():
         if upload_req.ok:
             while True:
                 op_lookup = requests.get(f"https://apis.roblox.com/assets/user-auth/v1/{upload_req.json()['path']}",headers = headers)
-                if op_lookup.status_code in (200,201,204,203):
-                    print(op_lookup.ok)
+
+                if op_lookup.ok: 
+                    #print(op_lookup.ok)
                     if op_lookup.json().get("done"):
                         asset_id =  op_lookup.json()["response"]["assetId"]
                         release_item = self.releaseAsset(asset_id=asset_id, price= rel_price)
                         return op_lookup.json()
+                
              
                     
         else:
-            log.error(upload_req.text)
-            log.error(upload_req.status_code)
+            if "InsufficientFunds" in upload_req.text:
+                raise InsufficientFundsException(upload_req.json())
+
             return False

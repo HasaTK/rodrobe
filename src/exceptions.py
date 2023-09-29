@@ -64,3 +64,11 @@ class InvalidGroupID(Exception):
     """
 
     pass
+
+
+class InsufficientFundsException(Exception):
+    """ 
+    Raised if Funds are not sufficient 
+    """ 
+
+    pass
