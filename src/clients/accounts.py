@@ -219,6 +219,7 @@ class RobloxAccount():
         :param str asset_name:
         :param bin_file: 
         """
+        print("lol")
 
         headers = self.headers
         headers["x-csrf-token"] = self.csrf_token
@@ -248,7 +249,7 @@ class RobloxAccount():
         if upload_req.ok:
             while True:
                 op_lookup = requests.get(f"https://apis.roblox.com/assets/user-auth/v1/{upload_req.json()['path']}",headers = headers)
-
+                print(op_lookup.ok)
                 if op_lookup.ok: 
                     #print(op_lookup.ok)
                     if op_lookup.json().get("done"):

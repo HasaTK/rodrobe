@@ -32,7 +32,6 @@ class Republish(commands.Cog):
             
             with open(asset_path, "wb") as file:
                 file.write(asset["bytes"])
-            print(2)
             
         asset_details = assets.getAssetDetails(asset_id)
         if not asset_details:
