@@ -219,7 +219,6 @@ class RobloxAccount():
         :param str asset_name:
         :param bin_file: 
         """
-        print("lol")
 
         headers = self.headers
         headers["x-csrf-token"] = self.csrf_token
