@@ -4,15 +4,14 @@ import json,uuid
 import os
 
 from src                    import config
-from src.utils              import log 
+from src.utils              import log
 from src.exceptions         import InvalidAssetType, InsufficientFundsException
 from requests.exceptions    import JSONDecodeError
 from typing import Optional, Dict
 
 
-from pprint import pprint
-class RobloxAccount():
-    
+class RobloxAccount:
+
     def __init__(
         self,
         cookie,
@@ -21,12 +20,12 @@ class RobloxAccount():
 
         self.cookie     = ".ROBLOSECURITY="+cookie
         self.user_id    =  None
-        self.user_agent = user_agent 
+        self.user_agent = user_agent
         self.headers    = {"User-Agent":self.user_agent, "Cookie": self.cookie}
         self.csrf_token = self.getCsrfToken()
         self.getClientInfo()
 
-     
+
     def getClientInfo(self) -> Dict:
 
         """
@@ -37,9 +36,9 @@ class RobloxAccount():
         """
 
         client_info = requests.get("https://www.roblox.com/my/settings/json", headers=self.headers)
-        
-        try: 
-        
+
+        try:
+
             self.user_id =  client_info.json()["UserId"]
             self.name   =  client_info.json()["Name"]
 
@@ -51,7 +50,7 @@ class RobloxAccount():
         except Exception as err:
             log.error(f"Failed to get account info | {err}")
             return False
-    
+
 
     def getRobux(self) -> int:
         """
@@ -64,7 +63,7 @@ class RobloxAccount():
         client_robux = requests.get(f"https://economy.roblox.com/v1/users/{self.user_id}/currency", headers=self.headers)
         return client_robux.json()["robux"]
 
-    
+
     def getAllGroups(self) -> Dict:
         """
         Gets the groups the account is in along with the roles the account has
@@ -72,11 +71,11 @@ class RobloxAccount():
         :return: groups & roles
         :rtype dict:
         """
-        
+
         group_roles = requests.get(f"https://groups.roblox.com/v1/users/{self.user_id}/groups/roles", headers = self.headers)
         return group_roles.json()
 
-    
+
     def checkIfInGroup(self, group_id: int) -> dict:
         """
         Checks if the account is in the specified group id and returns a self explanatory dictionary
@@ -97,29 +96,29 @@ class RobloxAccount():
         groupsData = self.getAllGroups()["data"]
         if not groupsData:
             return None
-            
+
         for group in groupsData:
             group_obj = group["group"]
-            
+
             if group_obj["id"] == group_id:
                 role_obj = group["role"]
 
                 if self.user_id == group_obj["owner"]["userId"]:
                     return {"isOwner":True,"rank":role_obj["rank"]}
                 else:
-                    return {"isOwner":False,"rank":role_obj["rank"]}    
+                    return {"isOwner":False,"rank":role_obj["rank"]}
         return None
 
     def getGroupSummary(self, group_id: int):
-        
+
 
         group_bal = requests.get(f"https://economy.roblox.com/v1/groups/{group_id}/currency",headers = self.headers)
         summary = requests.get(f"https://economy.roblox.com/v1/groups/{group_id}/revenue/summary/day",headers = self.headers)
 
         if group_bal.ok and summary.ok:
             return {"robux":group_bal.json()["robux"], "pending_robux": summary.json()["pendingRobux"]}
-        
-    
+
+
     def getCsrfToken(self):
 
         """ 
@@ -162,7 +161,7 @@ class RobloxAccount():
             },
             headers=self.headers
         )
-        
+
         cached_assets = []
         log.info(fetchData.status_code)
 
@@ -172,11 +171,11 @@ class RobloxAccount():
                 if asset["itemType"] == "Asset":
                    cached_assets.append(asset)
 
-        
-        
+
+
         return {"data":cached_assets,"obj":fetchData}
 
-    
+
     def releaseAsset(self, asset_id: int, price: int):
 
         """ 
@@ -191,22 +190,22 @@ class RobloxAccount():
         headers["x-csrf-token"] = self.csrf_token
 
         release_request = requests.post(
-            f"https://itemconfiguration.roblox.com/v1/assets/{asset_id}/release",
+            url=f"https://itemconfiguration.roblox.com/v1/assets/{asset_id}/release",
             json={
-                "priceConfiguration":{
-                    "priceInRobux":price
+                "priceConfiguration": {
+                    "priceInRobux": price
                 },
-                "saleStatus":"OnSale",
-                "releaseConfiguration":{
-                    "saleAvailabilityLocations":[0,1]
+                "saleStatus": "OnSale",
+                "releaseConfiguration": {
+                    "saleAvailabilityLocations": [0,1]
                 }
             },
-            headers = headers
+            headers=headers
         )
-
 
         if not release_request.ok:
             raise Exception(release_request.text)
+
         return release_request
 
     def uploadGroupAsset(self, group_id: int, asset_type: str, asset_name: str, bin_file):
@@ -230,34 +229,33 @@ class RobloxAccount():
         if str(asset_type) not in ("Shirt","Pants","TShirt"):
             raise InvalidAssetType("Asset type provided is invalid. Double check capitalization")
         else:
-            rel_price = config.get("tshirt_price") if asset_type == "TShirt" else config.get("item_price")
+            rel_price = config.cfg_file["assets"]["tshirt_price"] if asset_type == "TShirt" else config.cfg_file["assets"]["item_price"]
             expectedPrice = 0 if asset_type== "TShirt" else 10
-       
-        with open("config/description.txt","r") as file:
+
+        with open("config/description.txt", "r") as file:
             description = file.read()
 
         request_data = json.dumps({"displayName":asset_name,"description":description,"assetType":asset_type,"creationContext":{"creator":{"groupId":group_id},"expectedPrice":expectedPrice}})
-        
-        upload_req = requests.post(
-            "https://apis.roblox.com/assets/user-auth/v1/assets",
-            headers = headers,
-            files = {"fileContent":(bin_file.name, bin_file,"image/png"),"request":(None,request_data)},
-        )
 
+        upload_req = requests.post(
+            url="https://apis.roblox.com/assets/user-auth/v1/assets",
+            headers=headers,
+            files={"fileContent": (bin_file.name, bin_file, "image/png"), "request": (None, request_data)},
+        )
 
         if upload_req.ok:
             while True:
-                op_lookup = requests.get(f"https://apis.roblox.com/assets/user-auth/v1/{upload_req.json()['path']}",headers = headers)
+                op_lookup = requests.get(
+                    url=f"https://apis.roblox.com/assets/user-auth/v1/{upload_req.json()['path']}",
+                    headers=headers
+                )
                 print(op_lookup.ok)
-                if op_lookup.ok: 
-                    #print(op_lookup.ok)
+                if op_lookup.ok:
+
                     if op_lookup.json().get("done"):
                         asset_id =  op_lookup.json()["response"]["assetId"]
                         release_item = self.releaseAsset(asset_id=asset_id, price= rel_price)
                         return op_lookup.json()
-                
-             
-                    
         else:
             if "InsufficientFunds" in upload_req.text:
                 raise InsufficientFundsException(upload_req.json())

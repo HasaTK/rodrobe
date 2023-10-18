@@ -1,31 +1,36 @@
-import multiprocessing
-import asyncio, os
-
+import os
+import asyncio
 from src.app        import monitor
 from src.utils      import log
-from src            import config
+from toml           import load
+from multiprocessing import Process
 
 from src.clients import discord
-from multiprocessing import Process
+
 
 def main():
     """
     Initiates the program 
     """
-    
+
+    config = load(".toml")
     log.info("Starting program..")
 
     if not os.path.isfile("config/description.txt"):
         log.error("Please create a text file called 'description' in the config folder. This file will be used when assets are being uploaded.")
         return
-    newMonitor = monitor.Monitor(
-        holder_cookie   = config.get("holder_cookie"),
-        uploader_cookie = config.get("uploader_cookie"),
-        group_id        = config.get("group_id"),
-    )
 
-    Process(target=newMonitor.load,args=()).start()
-    asyncio.run(discord.main())
+    try:
+        new_monitor = monitor.Monitor(
+            holder_cookie   = config["group"]["holder_cookie"],
+            uploader_cookie = config["group"]["uploader_cookie"],
+            group_id        = config["group"]["group_id"],
+        )
+        Process(target=new_monitor.load, args=()).start()
+        asyncio.run(discord.main())
+
+    except Exception as exception:
+        log.error(exception)
 
 
 if __name__ == "__main__":

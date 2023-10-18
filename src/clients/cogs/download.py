@@ -11,23 +11,17 @@ from src                import config
 from src.utils.views    import DownloadView
 
 
-
-
-
 class Download(commands.Cog):
 
     def __init__(self, client):
         self.client = client 
 
     @commands.Cog.listener()
-
     async def on_ready(self):
         log.success("Downlad cog is ready")
-    
-    
+
     @commands.command(help = f"Shows template of an asset")
     @commands.check(config.is_whitelisted)
-
     async def download(self, ctx, asset_id):        
         try:
 
@@ -36,7 +30,6 @@ class Download(commands.Cog):
             with open(f"src/cache/{file_name}","wb") as file:
                 file.write(assetBytes['bytes'])
 
-            
             asset_details = assets.getAssetDetails(asset_id)
             embed_description = f"**Type:** {assetBytes['type']}\n**Asset:** [{asset_details['name'] if asset_details else 'asset_name'}](https://www.roblox.com/catalog/{asset_id})"
             

@@ -19,7 +19,7 @@ class AbstractWebhook(ABC):
 class DiscordWebhook(AbstractWebhook):
     def __init__(
         self, 
-        webhook_url: Optional[str] = config.get("discord_webhook")
+        webhook_url: Optional[str] = config.cfg_file["discord"]["sales_webhook"]
     ):
         self.webhook_url = webhook_url
     

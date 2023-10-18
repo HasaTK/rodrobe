@@ -10,8 +10,8 @@ class revenue(commands.Cog):
 
     def __init__(self, client):
         self.client         = client 
-        self.holder_account = accounts.RobloxAccount(config.get("holder_cookie"))
-        self.group_id = config.get("group_id")
+        self.holder_account = accounts.RobloxAccount(config.cfg_file["group"]["holder_cookie"])
+        self.group_id = config.cfg_file["group"]["group_id"]
 
     @commands.Cog.listener()
     

@@ -1,7 +1,6 @@
 import requests
-import time, random
-
-from typing             import Optional,Dict,List
+import time
+import random
 
 from src.utils          import log
 from src.utils.currency import robux_price
@@ -9,7 +8,6 @@ from src.clients        import accounts
 from src.exceptions     import InvalidCredentialsError, AccountNotInGroup, LowRankException
 from src                import config
 from src.adapters       import webhooks
-
 
 
 class Monitor:
@@ -22,14 +20,14 @@ class Monitor:
     ):
 
         self.active = False
-        self.cookies = (holder_cookie,uploader_cookie)
+        self.cookies = (holder_cookie, uploader_cookie)
         self.group_id = group_id
 
         self.holder = accounts.RobloxAccount(self.cookies[0])
         self.uploader = accounts.RobloxAccount(self.cookies[1])
         self.last_cached_id = None
 
-        self.sales_webhook = webhooks.DiscordWebhook() if config.get("discord_webhook") else None
+        self.sales_webhook = webhooks.DiscordWebhook() if config.cfg_file["discord"]["sales_webhook"] else None
         
     def verifyGroupRankings(self):
 
@@ -56,7 +54,11 @@ class Monitor:
         }
         log.info("Checking for new sales..")
 
-        salesPage = requests.get(f"https://economy.roblox.com/v2/groups/{self.group_id}/transactions",params=params,headers=self.holder.headers)
+        salesPage = requests.get(
+            url=f"https://economy.roblox.com/v2/groups/{self.group_id}/transactions",
+            params=params,
+            headers=self.holder.headers
+        )
         salesData= salesPage.json()["data"]
         print(salesPage.status_code)
 
@@ -64,8 +66,7 @@ class Monitor:
 
             log.info("Checked for sales with 0 new sales found.")
             return 
-        
-        
+
         if self.last_cached_id:
             newSalesCache = []
 
@@ -75,7 +76,6 @@ class Monitor:
                         self.last_cached_id = salesData[0]["id"]
                         return 
 
-                    #TODO: Recode this
                     rates = config.cfg_get("rates") or 3.5
 
                     robuxAT = sale['currency']['amount']
@@ -85,40 +85,53 @@ class Monitor:
                     log.success(f"Fetched new sale for {sale['details']['name']} by {sale['agent']['name']} ({robuxAT} A/T)")
 
                     if self.sales_webhook:
-                        get_player_headshot = requests.get(f"https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds={sale['agent']['id']}&size=150x150&format=Png&isCircular=false")
-                        if not get_player_headshot.ok:
-                            player_headshot = "https://t6.rbxcdn.com/b48637b2a6266bd379a09afb5a8d5131"
-                        else:
+                        get_player_headshot = requests.get(
+                            url=f"https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds={sale['agent']['id']}",
+                            params={
+                                "size": "150x150",
+                                "format": "Png",
+                                "isCircular": False
+                            }
+                        )
+                        if get_player_headshot.ok:
                             player_headshot = get_player_headshot.json()["data"][0]["imageUrl"]
-                            
+                        else:
+                            player_headshot = "https://t6.rbxcdn.com/b48637b2a6266bd379a09afb5a8d5131"
 
                         self.sales_webhook.raw_send(content={
-                            "content":"",
+                            "content": "",
                             "embeds":[
                                 {
-                                    "type":"rich",
-                                    "title":"New Item Sold 💰",
-                                    "description":"",
+                                    "type": "rich",
+                                    "title": "New Item Sold 💰",
+                                    "description": "",
                                     "color": 0x0fbb7f,
                                     "fields":[
-                                        {"name":"Player","value":f"**Username: [{sale['agent']['name']}](https://www.roblox.com/users/{sale['agent']['id']}/profile)**\n**User ID: {str(sale['agent']['id'])}**"},
-                                        {"name":"Item","value":f"**[{sale['details']['name']}](https://www.roblox.com/catalog/{str(sale['details']['id'])})**"},
-                                        {"name":"Amount","value":f"**A/T: {robuxAT} (${robux_price(robuxAT,rates)})**\n**B/T: {round(robuxBT)} (${robux_price(robuxBT, rates)})**"}
+                                        {
+                                            "name": "Player",
+                                            "value": f"**Username: [{sale['agent']['name']}](https://www.roblox.com/users/{sale['agent']['id']}/profile)**\n**User ID: {str(sale['agent']['id'])}**"
+                                        },
+                                        {
+                                            "name": "Item",
+                                            "value": f"**[{sale['details']['name']}](https://www.roblox.com/catalog/{str(sale['details']['id'])})**"
+                                        },
+                                        {
+                                            "name": "Amount",
+                                            "value": f"**A/T: {robuxAT} (${robux_price(robuxAT,rates)})**\n**B/T: {round(robuxBT)} (${robux_price(robuxBT, rates)})**"
+                                        }
                                     ],
-                                    "thumbnail":{
+                                    "thumbnail": {
                                         "url": player_headshot,
                                         "proxy_url":player_headshot,
                                     },
-                                    "footer":{
-                                        "text":f"Currency converted using rates: ${rates} / 1k (2DP)"
+                                    "footer": {
+                                        "text": f"Currency converted using rates: ${rates} / 1k (2DP)"
                                     },
                                 }
                             ]
                         })
 
         self.last_cached_id = salesData[0]["id"]
-
-
 
     def load(self):
         """
@@ -131,18 +144,18 @@ class Monitor:
         if not holder_info:
             raise InvalidCredentialsError("Holder cookie is invalid")
         else:
-            log.success(f"Logged in to {holder_info['name']} ({holder_info['id']})")
+            log.success(f"Logged in to {holder_info['name']} ({holder_info['id']}) (holder)")
 
         if not uploader_info:
             raise InvalidCredentialsError("Uploader cookie is invalid")
         else:
-           log.success(f"Logged in to {uploader_info['name']} ({uploader_info['id']})")
+            log.success(f"Logged in to {uploader_info['name']} ({uploader_info['id']}) (uploader)")
         
         try:
             self.verifyGroupRankings()
         except Exception as e:
             log.error(e)
-            return 
+            return
 
         while True:
             try:
@@ -151,6 +164,6 @@ class Monitor:
 
                 log.error(e, prefix="fetcher")
             
-            time.sleep(random.randint(30,60))
+            time.sleep(random.randint(30, 60))
 
         

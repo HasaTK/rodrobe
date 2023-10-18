@@ -1,0 +1,16 @@
+[group]
+holder_cookie = ""
+uploader_cookie = ""
+group_id = 0
+
+[discord]
+sales_webhook = ""
+bot_prefix = "!"
+bot_whitelist = [1,2,3]
+bot_token = ""
+
+[assets]
+# The robux price for shirts and pants which will be used when a shirt/pant is republished
+item_price = 5
+# The robux price for a t-shirt which will be used when a tshirt is republished
+tshirt_price = 5

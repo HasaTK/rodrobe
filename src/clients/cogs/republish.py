@@ -1,5 +1,6 @@
 import discord 
 import requests
+import os
 
 from hashlib        import sha256
 from src.utils      import log,assets
@@ -14,7 +15,7 @@ class Republish(commands.Cog):
 
     def __init__(self, client):
         self.client = client 
-        self.uploader = accounts.RobloxAccount(config.get("uploader_cookie"))
+        self.uploader = accounts.RobloxAccount(config.cfg_file["group"]["uploader_cookie"])
 
     def republish_asset(self, asset_id: int, remove_watermark = True):
 
@@ -36,8 +37,7 @@ class Republish(commands.Cog):
         asset_details = assets.getAssetDetails(asset_id)
         if not asset_details:
             raise AssetDetailsNotFound("Asset details were unable to be obtained")
-                
-        
+
         if asset["type"].lower() == "shirt graphic" or asset["type"] == "TShirt":
             asset_type = "TShirt"
         elif asset:
@@ -47,26 +47,22 @@ class Republish(commands.Cog):
             raise InvalidAssetType("Asset Type provided is not valid")
 
         republish = self.uploader.uploadGroupAsset(
-            group_id=config.get("group_id"), 
+            group_id=config.cfg_file["group"]["group_id"], 
             asset_type = asset_type, 
             asset_name = asset_details["name"], 
             bin_file = open(asset_path,"rb"),
         )
         
+        os.remove(asset_path)
+
         return republish
 
-        
- 
-        
-
     @commands.Cog.listener()
-
     async def on_ready(self):
         log.success("Republishing cog is ready")
     
     @commands.command(help="uploads the asset to your own group", aliases = ["republish", "repub", "rp", "rb"])
     @commands.check(config.is_whitelisted)
-
     async def steal(self, ctx, asset_id, remove_watermark = True):
         try:
             init_embed = discord.Embed(
@@ -110,12 +106,12 @@ class Republish(commands.Cog):
             await message.edit(embed=embed)
         except InvalidAssetType:
             embed = discord.Embed(
-                title = "Invalid Asset Type",
-                color = config.EmbedColors.ERROR,
-                description = "The asset type provided is invalid"
+                title="Invalid Asset Type",
+                color=config.EmbedColors.ERROR,
+                description="The asset type provided is invalid"
             )
 
-            await message.edit(embed = embed)
+            await message.edit(embed=embed)
          
         except Exception as e:
             
@@ -127,7 +123,7 @@ class Republish(commands.Cog):
         
             )
 
-            await message.edit(embed = embed)
+            await message.edit(embed=embed)
                 
 
 
@@ -141,19 +137,19 @@ class Republish(commands.Cog):
             group_info = groups.getGroupInfo(group_id=group_id)
         except InvalidGroupID:
             embed = discord.Embed(
-                title = "Invalid group ID",
+                title="Invalid group ID",
                 description="The group id provided is invalid",
-                color = config.EmbedColors.ERROR
+                color=config.EmbedColors.ERROR
             )
 
             await ctx.reply(embed = embed)
 
         warningEmbed = discord.Embed(
-            title = "Confirmation",
+            title="Confirmation",
             description=f"Are you sure you want to upload all clothing assets from group [{group_id}](https:/www.roblox.com/groups/{group_id})"
         )
 
-        uploader = accounts.RobloxAccount(config.get("uploader_cookie"))
+        uploader = accounts.RobloxAccount(config.cfg_file["group"]["uploader_cookie"])
         cached_assets = uploader.getGroupAssets(group_id=group_id)
     
         embed = discord.Embed(
@@ -179,9 +175,9 @@ class Republish(commands.Cog):
                                 log.info(f"Uploaded asset  of '{pub_name}' with id: {pub_id}")
                                 
                                 publishEmbed = discord.Embed(
-                                    title = "Last asset published",
-                                    description = f"Last published [{pub_name}](https:/www.roblox.com/catalog/{pub_id})",
-                                    color = config.EmbedColors.INFO
+                                    title="Last asset published",
+                                    description=f"Last published [{pub_name}](https:/www.roblox.com/catalog/{pub_id})",
+                                    color=config.EmbedColors.INFO
                                 )
                                 await message.edit(embed=publishEmbed)
                             else:

@@ -3,23 +3,10 @@ import dotenv
 import json
 
 from src.utils      import log
-from dotenv         import load_dotenv
+from toml           import load
 from src.exceptions import InvalidConfigException
 
-load_dotenv(".env")
-
-cfg_tuple = (
-    "group_id",
-    "holder_cookie",
-    "uploader_cookie",
-    "discord_webhook",
-    "discord_bot_token",
-    "discord_bot_prefix",
-    "tshirt_price",
-    "item_price"
-)
-
-
+cfg_file = load(".toml")
 
 
 class EmbedColors:
@@ -42,34 +29,12 @@ def is_whitelisted(user: any):
     :return: bool
     """
 
-    wl_table = os.environ.get("DISCORD_BOT_WHITELIST")
-    wl_table = json.loads(wl_table)
+    wl_table = cfg_file["discord"]["bot_whitelist"]
 
     if type(user) == int:
         return id in wl_table
     else:
         return user.author.id in wl_table
-
-
-
-def get(requested_item) -> str | int:
-    """ 
-    Gets the config requested
-
-    :param str requested_item:
-    :return: 
-    :rtype str | int:
-    """
-
-    if requested_item.lower() in cfg_tuple:
-        item = os.environ.get(requested_item.upper())
-        if item:
-            if item.isnumeric():
-                return int(item)
-            else:
-                return item
-    
-    raise InvalidConfigException("Config does not exist or is not able to be accessed.")
 
 
 def cfg_set(key, value):
