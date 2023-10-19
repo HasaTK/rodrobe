@@ -1,12 +1,9 @@
-import time
 import requests
-import json,uuid
-import os
+import json
+import logging
 
 from src                    import config
-from src.utils              import log
 from src.exceptions         import InvalidAssetType, InsufficientFundsException
-from requests.exceptions    import JSONDecodeError
 from typing import Optional, Dict
 
 
@@ -24,6 +21,7 @@ class RobloxAccount:
         self.headers    = {"User-Agent":self.user_agent, "Cookie": self.cookie}
         self.csrf_token = self.getCsrfToken()
         self.getClientInfo()
+        self.logger = logging.getLogger(__name__)
 
 
     def getClientInfo(self) -> Dict:
@@ -48,14 +46,14 @@ class RobloxAccount:
             }
 
         except Exception as err:
-            log.error(f"Failed to get account info | {err}")
+            self.logger.error(f"Failed to get account info | {err}")
             return False
 
 
     def getRobux(self) -> int:
         """
-        Gets amount of robux  
-        
+        Gets amount of robux
+
         :return robux:
         :rtype int:
         """
@@ -82,12 +80,12 @@ class RobloxAccount:
 
         return dict:
         {
-            "isOwner": bool, 
+            "isOwner": bool,
             "rank": int,
         }
 
         If the accout is not in the specified group then it will return a NoneType
-        
+
         :param int group_id:
         :return: dict
         :rtype int | bool:
@@ -121,7 +119,7 @@ class RobloxAccount:
 
     def getCsrfToken(self):
 
-        """ 
+        """
         Generates an x-csrf-token
 
         :return token:
@@ -133,12 +131,12 @@ class RobloxAccount:
         if "x-csrf-token" in str(get_token.headers).lower():
             return get_token.headers["x-csrf-token"]
         else:
-            log.error(f"Error fetching x-csrf-token | {get_token.status_code} | {get_token.text}",__name__)
+            self.logger.error(f"Error fetching x-csrf-token | {get_token.status_code} | {get_token.text}")
             return None
 
     def getGroupAssets(self, group_id: int, limit: Optional[int] = 50, cursor: Optional[str] = None):
 
-        """ 
+        """
         Fetches the ids of the assets in the specified group up to the specified limit
 
         :param int group_id:
@@ -163,7 +161,7 @@ class RobloxAccount:
         )
 
         cached_assets = []
-        log.info(fetchData.status_code)
+        self.logger.info(fetchData.status_code)
 
         if fetchData.ok:
             data = fetchData.json()["data"]

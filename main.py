@@ -1,11 +1,20 @@
 import os
 import asyncio
+import logging
 from src.app        import monitor
-from src.utils      import log
 from toml           import load
 from multiprocessing import Process
 
 from src.clients import discord
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s:%(levelname)s:%(name): %(message)s",
+    handlers=[
+        logging.FileHandler("rodrobe.log"),
+        logging.StreamHandler()
+    ]
+)
 
 
 def main():
@@ -13,11 +22,12 @@ def main():
     Initiates the program 
     """
 
-    config = load(".toml")
-    log.info("Starting program..")
+    logger = logging.getLogger(__name__)
 
+    config = load(".toml")
+    logger.info("Starting program..")
     if not os.path.isfile("config/description.txt"):
-        log.error("Please create a text file called 'description' in the config folder. This file will be used when assets are being uploaded.")
+        logger.error("Create a text file called 'description' in the config folder. This file will be used when assets are being uploaded. ")
         return
 
     try:
@@ -30,7 +40,7 @@ def main():
         asyncio.run(discord.main())
 
     except Exception as exception:
-        log.error(exception)
+        logger.error(exception)
 
 
 if __name__ == "__main__":

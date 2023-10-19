@@ -1,8 +1,8 @@
 import discord 
 import requests
+import logging 
 
 from src                import config
-from src.utils          import log
 from src.utils.currency import isFloatOrDigit
 from discord.ext        import commands 
 
@@ -12,10 +12,11 @@ class configs(commands.Cog):
 
     def __init__(self, client):
         self.client = client 
+        self.logger = logging.getLogger(__name__)
 
     @commands.Cog.listener()
     async def on_ready(self):
-        log.success("Configs cog is ready")
+        self.logger.info("Configs cog is ready")
     
 
     @commands.command(aliases=["s"],help="Sets a config to a given value ")
@@ -35,7 +36,7 @@ class configs(commands.Cog):
                 
                 await ctx.reply(f"Successfully set `rates` to `{value}`")
             except Exception as e:
-                log.error(e,__name__)
+                self.logger.error(e)
                 await ctx.reply(f"Error setting rate to `{value}`")
     
     @commands.command(aliases=['g'], help="Gets the config")

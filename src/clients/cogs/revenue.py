@@ -1,8 +1,9 @@
 import discord 
+import logging
 
 from src                    import config
 from src.clients            import accounts
-from src.utils              import log, groups
+from src.utils              import groups
 from src.utils.currency     import robux_price
 from discord.ext            import commands 
 
@@ -12,11 +13,12 @@ class revenue(commands.Cog):
         self.client         = client 
         self.holder_account = accounts.RobloxAccount(config.cfg_file["group"]["holder_cookie"])
         self.group_id = config.cfg_file["group"]["group_id"]
+        self.logger = logging.getLogger(__name__)
 
     @commands.Cog.listener()
     
     async def on_ready(self):
-        log.success("Revenue cog is ready")
+        self.logger.info("Revenue cog is ready")
     
     @commands.command(aliases=["robux","bal","balance"],help="Gives an overview of the groups revenue(conversion included)")
     @commands.check(config.is_whitelisted)

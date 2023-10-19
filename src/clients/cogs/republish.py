@@ -1,9 +1,9 @@
 import discord 
-import requests
 import os
+import logging
 
 from hashlib        import sha256
-from src.utils      import log,assets
+from src.utils      import assets
 from src.utils      import groups
 from src.exceptions import InvalidAssetId, InvalidAssetType, AssetDetailsNotFound, InvalidGroupID
 
@@ -15,6 +15,7 @@ class Republish(commands.Cog):
 
     def __init__(self, client):
         self.client = client 
+        self.logger = logging.getLogger(__name__)
         self.uploader = accounts.RobloxAccount(config.cfg_file["group"]["uploader_cookie"])
 
     def republish_asset(self, asset_id: int, remove_watermark = True):
@@ -59,7 +60,7 @@ class Republish(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        log.success("Republishing cog is ready")
+        self.logger.info("Republishing cog is ready")
     
     @commands.command(help="uploads the asset to your own group", aliases = ["republish", "repub", "rp", "rb"])
     @commands.check(config.is_whitelisted)
@@ -96,7 +97,7 @@ class Republish(commands.Cog):
         
         except AssetDetailsNotFound:
 
-            log.error("Asset details were not found",__name__)
+            self.logger.error("Asset details were not found")
             embed = discord.Embed(
                 title = "Error",
                 color = config.EmbedColors.ERROR,
@@ -115,7 +116,7 @@ class Republish(commands.Cog):
          
         except Exception as e:
             
-            log.error(e,__name__)
+            self.logger.error(e)
             embed = discord.Embed(
                 title = "Error",
                 description=f'```{e}```',
@@ -172,7 +173,7 @@ class Republish(commands.Cog):
 
                                 pub_id = upload["response"]["assetId"] 
                                 pub_name = upload["response"]["displayName"]
-                                log.info(f"Uploaded asset  of '{pub_name}' with id: {pub_id}")
+                                self.logger.info(f"Uploaded asset  of '{pub_name}' with id: {pub_id}")
                                 
                                 publishEmbed = discord.Embed(
                                     title="Last asset published",
@@ -181,7 +182,7 @@ class Republish(commands.Cog):
                                 )
                                 await message.edit(embed=publishEmbed)
                             else:
-                                log.error(upload,__name__)
+                                self.logger.error(upload)
                     
                     else:
                         if "the creator does not have enough robux to pay for the upload fees" in str(request.text).lower():

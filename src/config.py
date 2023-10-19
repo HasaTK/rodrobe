@@ -1,10 +1,7 @@
 import os 
-import dotenv
 import json
 
-from src.utils      import log
 from toml           import load
-from src.exceptions import InvalidConfigException
 
 cfg_file = load(".toml")
 

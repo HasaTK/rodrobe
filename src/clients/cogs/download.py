@@ -1,8 +1,8 @@
-import discord 
-import requests
-import os 
+import discord
+import os
+import logging 
 
-from src.utils      import log, assets
+from src.utils      import assets
 from src.exceptions import InvalidAssetId
 from discord.ext    import commands 
 
@@ -15,10 +15,11 @@ class Download(commands.Cog):
 
     def __init__(self, client):
         self.client = client 
+        self.logger = logging.getLogger(__name__)
 
     @commands.Cog.listener()
     async def on_ready(self):
-        log.success("Downlad cog is ready")
+        self.logger.info("Downlad cog is ready")
 
     @commands.command(help = f"Shows template of an asset")
     @commands.check(config.is_whitelisted)

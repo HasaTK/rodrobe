@@ -1,19 +1,19 @@
-import discord 
-import requests
+import discord
+import logging
 
-from src.utils      import log
-from discord.ext    import commands 
+from discord.ext    import commands
 from src            import config
 
 class ping(commands.Cog):
 
     def __init__(self, client):
         self.client = client 
-        
+        self.logger = logging.getLogger(__name__)
+
     @commands.Cog.listener()
 
     async def on_ready(self):
-        log.success("Ping cog is ready")
+        self.logger.info("Ping cog is ready")
     
     @commands.command(help="Testing command 🏓")
     @commands.check(config.is_whitelisted)

@@ -1,9 +1,9 @@
 import os 
 import discord
+import logging
 
 from src            import config
-from src.utils      import log
-from discord.ext    import commands 
+from discord.ext    import commands
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -13,6 +13,8 @@ client = commands.Bot(
     command_prefix=config.cfg_file["discord"]["bot_prefix"],
     help_command=None
 )
+
+logger = logging.getLogger(__name__)
 
 async def loadCogs():
     """
@@ -38,7 +40,7 @@ async def on_command_error(ctx, error):
 
 
 async def main():
-    log.info("Starting discord bot")
+    logger.info("Starting discord bot")
     await loadCogs()
     await client.start(config.cfg_file["discord"]["bot_token"])
 

@@ -1,4 +1,4 @@
-# Roblox Clothing Bot (WIP)
+# RoDrobe - A roblox clothing bot (WIP)
 A discord roblox clothing bot for your group. 
 
 ![](https://cdn.discordapp.com/attachments/1154068857879793674/1155502142161956905/image.png)
@@ -25,8 +25,8 @@ The bot will tell you if you are missing an argument. For more guidance on these
 1) Install [the latest version of python](https://www.python.org/)
 2) Open your terminal and run the following:
 ```console
-$ git clone https://github.com/soakingdry/roblox-clothing-bot
-$ cd roblox-clothing-bot
+$ git clone https://github.com/soakingdry/rodrobe
+$ cd rodrobe
 $ pip3 install -r requirements.txt
 ```
 3) Open the file named `.toml.example` and fill in the fields appropriately (example)
@@ -45,7 +45,7 @@ group_id = 0
 sales_webhook = ""
 # prefix of the bot.. slash commands may be supported in the future
 bot_prefix = "!"
-bot_whitelist = [your_discord_id_here,21231,...]
+bot_whitelist = [1,21231] # put the whitelisted discord ids in here
 # discord bot token
 bot_token = ""
 

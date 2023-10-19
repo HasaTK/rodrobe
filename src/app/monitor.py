@@ -1,14 +1,13 @@
 import requests
 import time
 import random
+import logging 
 
-from src.utils          import log
 from src.utils.currency import robux_price
 from src.clients        import accounts
 from src.exceptions     import InvalidCredentialsError, AccountNotInGroup, LowRankException
 from src                import config
 from src.adapters       import webhooks
-
 
 class Monitor:
 
@@ -28,10 +27,11 @@ class Monitor:
         self.last_cached_id = None
 
         self.sales_webhook = webhooks.DiscordWebhook() if config.cfg_file["discord"]["sales_webhook"] else None
+        self.logger = logging.getLogger(__name__)
         
     def verifyGroupRankings(self):
 
-        log.info("Checking if accounts are in specified group..")
+        self.logger.info("Checking if accounts are in specified group..")
         holder_data   = self.holder.checkIfInGroup(self.group_id)
         uploader_data = self.uploader.checkIfInGroup(self.group_id)
 
@@ -52,7 +52,7 @@ class Monitor:
             "limit": 25,
             "transactionType":"Sale"
         }
-        log.info("Checking for new sales..")
+        self.logger.info("Checking for new sales..")
 
         salesPage = requests.get(
             url=f"https://economy.roblox.com/v2/groups/{self.group_id}/transactions",
@@ -64,7 +64,7 @@ class Monitor:
 
         if salesData[0]["id"] == self.last_cached_id:
 
-            log.info("Checked for sales with 0 new sales found.")
+            self.logger.info("Checked for sales with 0 new sales found.")
             return 
 
         if self.last_cached_id:
@@ -82,7 +82,7 @@ class Monitor:
                     robuxBT = sale['currency']['bt_amount'] = robuxAT / 0.7 
 
                     newSalesCache.append(sale)
-                    log.success(f"Fetched new sale for {sale['details']['name']} by {sale['agent']['name']} ({robuxAT} A/T)")
+                    self.logger.info(f"Fetched new sale for {sale['details']['name']} by {sale['agent']['name']} ({robuxAT} A/T)")
 
                     if self.sales_webhook:
                         get_player_headshot = requests.get(
@@ -144,25 +144,24 @@ class Monitor:
         if not holder_info:
             raise InvalidCredentialsError("Holder cookie is invalid")
         else:
-            log.success(f"Logged in to {holder_info['name']} ({holder_info['id']}) (holder)")
+            self.logger.info(f"Logged in to {holder_info['name']} ({holder_info['id']}) (holder)")
 
         if not uploader_info:
             raise InvalidCredentialsError("Uploader cookie is invalid")
         else:
-            log.success(f"Logged in to {uploader_info['name']} ({uploader_info['id']}) (uploader)")
+            self.logger.info(f"Logged in to {uploader_info['name']} ({uploader_info['id']}) (uploader)")
         
         try:
             self.verifyGroupRankings()
         except Exception as e:
-            log.error(e)
+            self.logger.error(e)
             return
 
         while True:
             try:
                 self.fetchNewSales()
             except Exception as e:
-
-                log.error(e, prefix="fetcher")
+                self.logger.error("FETCHER {}".format(e))
             
             time.sleep(random.randint(30, 60))
 

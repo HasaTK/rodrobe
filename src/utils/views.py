@@ -4,8 +4,6 @@ import discord
 from src.utils import assets
 from src       import config
 
-from src.exceptions import InvalidAssetId,InvalidAssetType,AssetDetailsNotFound
-
 class DownloadView(discord.ui.View):
 
     def __init__(self, asset_id: int, embed):
