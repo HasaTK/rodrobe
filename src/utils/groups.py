@@ -2,7 +2,7 @@ import requests
 from src.exceptions import InvalidGroupID
 
 def getGroupInfo(group_id: int):
-    
+
     """ 
     Gets info on the group id provided 
 

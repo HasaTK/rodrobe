@@ -4,7 +4,7 @@ def isFloatOrDigit(input):
         return True
     except:
         return False
-    
+
 
 def robux_price(robux: int, rate: int) -> float:
     """ 

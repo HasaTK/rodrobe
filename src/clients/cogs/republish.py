@@ -5,11 +5,18 @@ import logging
 from hashlib        import sha256
 from src.utils      import assets
 from src.utils      import groups
-from src.exceptions import InvalidAssetId, InvalidAssetType, AssetDetailsNotFound, InvalidGroupID
+from src.exceptions import (
+    InvalidAssetId,
+    InvalidAssetType,
+    AssetDetailsNotFound,
+    InvalidGroupID,
+    AccountTerminatedException
+)
 
 from src.clients    import accounts
 from discord.ext    import commands 
 from src            import config
+
 
 class Republish(commands.Cog):
 
@@ -18,7 +25,7 @@ class Republish(commands.Cog):
         self.logger = logging.getLogger(__name__)
         self.uploader = accounts.RobloxAccount(config.cfg_file["group"]["uploader_cookie"])
 
-    def republish_asset(self, asset_id: int, remove_watermark = True):
+    def republish_asset(self, asset_id: int, remove_watermark=True):
 
         if remove_watermark:
             asset = assets.stripAssetWatermark(asset_id=asset_id)
@@ -44,14 +51,14 @@ class Republish(commands.Cog):
         elif asset:
             asset_type = asset["type"].lower().capitalize()
 
-        if not asset_type.lower() in ("shirt","pants","tshirt"):
+        if not asset_type.lower() in ("shirt", "pants", "tshirt"):
             raise InvalidAssetType("Asset Type provided is not valid")
 
         republish = self.uploader.uploadGroupAsset(
             group_id=config.cfg_file["group"]["group_id"], 
-            asset_type = asset_type, 
-            asset_name = asset_details["name"], 
-            bin_file = open(asset_path,"rb"),
+            asset_type=asset_type,
+            asset_name=asset_details["name"],
+            bin_file=open(asset_path, "rb"),
         )
         
         os.remove(asset_path)
@@ -101,7 +108,7 @@ class Republish(commands.Cog):
             embed = discord.Embed(
                 title = "Error",
                 color = config.EmbedColors.ERROR,
-                description = "Error while attempting to attemping to get asset details."
+                description = "Error while attempting to attempting to get asset details."
             )
 
             await message.edit(embed=embed)
@@ -125,9 +132,6 @@ class Republish(commands.Cog):
             )
 
             await message.edit(embed=embed)
-                
-
-
     
     @commands.command(help="republishes all the assets an existing group has to your group", aliases = ["sg", "stealgroup", "rg", "republishgroup","repgroup","repg"])
     @commands.check(config.is_whitelisted)
@@ -144,11 +148,6 @@ class Republish(commands.Cog):
             )
 
             await ctx.reply(embed = embed)
-
-        warningEmbed = discord.Embed(
-            title="Confirmation",
-            description=f"Are you sure you want to upload all clothing assets from group [{group_id}](https:/www.roblox.com/groups/{group_id})"
-        )
 
         uploader = accounts.RobloxAccount(config.cfg_file["group"]["uploader_cookie"])
         cached_assets = uploader.getGroupAssets(group_id=group_id)
@@ -190,7 +189,7 @@ class Republish(commands.Cog):
                                 title="Report",
                                 color=config.EmbedColors.ERROR,
                                 description=f"A total of {upload_count} assets were uploaded before running out of robux."
-                                )
+                            )
                             await ctx.reply(embed=embed)
                         elif "user is moderated" in str(request.text).lower():
                             embed = discord.Embed(
@@ -204,31 +203,34 @@ class Republish(commands.Cog):
                             embed = discord.Embed(
                                 title="Report",
                                 color=config.EmbedColors.ERROR,
-                                description=f"A total of {upload_count} assets were before encountering an error.\nError:\n```{request.text}"
+                                description=f"A total of {upload_count} assets were before encountering an error.\nError:\n```{request.text}```"
                             )
 
                             await ctx.reply(embed=embed)
 
-                    
                     cached_assets = uploader.getGroupAssets(group_id=group_id, cursor=cached_assets["obj"]["nextPageCursor"])
                 else:
                     break
 
-                        
-                    
+            except AccountTerminatedException:
+                embed = discord.Embed(
+                    title="Account Terminated",
+                    color=config.EmbedColors.ERROR,
+                    description=f"A total of {upload_count} assets were uploaded before being terminated."
+                )
+
+                await ctx.reply(embed=embed)
+
             except Exception as e:
                 embed = discord.Embed(
-                    title = "Error",
+                    title="Error",
                     description=f'```{e}```',
-                    color= config.EmbedColors.ERROR
+                    color=config.EmbedColors.ERROR
         
                 )
 
-                await ctx.reply( embed = embed)
+                await ctx.reply(embed=embed)
                 break
-
-            
-
 
 
 async def setup(client):

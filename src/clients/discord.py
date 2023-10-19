@@ -16,6 +16,7 @@ client = commands.Bot(
 
 logger = logging.getLogger(__name__)
 
+
 async def loadCogs():
     """
     Loads all the cogs in the cog directory 
@@ -43,5 +44,4 @@ async def main():
     logger.info("Starting discord bot")
     await loadCogs()
     await client.start(config.cfg_file["discord"]["bot_token"])
-
 

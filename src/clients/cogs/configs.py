@@ -7,7 +7,6 @@ from src.utils.currency import isFloatOrDigit
 from discord.ext        import commands 
 
 
-
 class configs(commands.Cog):
 
     def __init__(self, client):
@@ -17,7 +16,6 @@ class configs(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.logger.info("Configs cog is ready")
-    
 
     @commands.command(aliases=["s"],help="Sets a config to a given value ")
     @commands.check(config.is_whitelisted)

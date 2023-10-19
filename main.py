@@ -1,15 +1,14 @@
 import os
-import asyncio
+
 import logging
 from src.app        import monitor
+from src.config     import cfg_file
 from toml           import load
-from multiprocessing import Process
 
-from src.clients import discord
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s:%(levelname)s:%(name): %(message)s",
+    level=logging.DEBUG if cfg_file["other"]["debug_mode"] else logging.INFO,
+    format="%(asctime)s:%(levelname)s:%(name)s: %(message)s",
     handlers=[
         logging.FileHandler("rodrobe.log"),
         logging.StreamHandler()
@@ -36,8 +35,7 @@ def main():
             uploader_cookie = config["group"]["uploader_cookie"],
             group_id        = config["group"]["group_id"],
         )
-        Process(target=new_monitor.load, args=()).start()
-        asyncio.run(discord.main())
+        new_monitor.load()
 
     except Exception as exception:
         logger.error(exception)

@@ -1,9 +1,10 @@
 import requests
 import json
 import logging
+import time
 
 from src                    import config
-from src.exceptions         import InvalidAssetType, InsufficientFundsException
+from src.exceptions         import InvalidAssetType, InsufficientFundsException, AccountTerminatedException
 from typing import Optional, Dict
 
 
@@ -19,10 +20,9 @@ class RobloxAccount:
         self.user_id    =  None
         self.user_agent = user_agent
         self.headers    = {"User-Agent":self.user_agent, "Cookie": self.cookie}
+        self.logger = logging.getLogger(__name__)
         self.csrf_token = self.getCsrfToken()
         self.getClientInfo()
-        self.logger = logging.getLogger(__name__)
-
 
     def getClientInfo(self) -> Dict:
 
@@ -33,12 +33,11 @@ class RobloxAccount:
         :rtype:  dict
         """
 
-        client_info = requests.get("https://www.roblox.com/my/settings/json", headers=self.headers)
-
+        client_info = requests.get(url="https://www.roblox.com/my/settings/json", headers=self.headers)
         try:
 
-            self.user_id =  client_info.json()["UserId"]
-            self.name   =  client_info.json()["Name"]
+            self.user_id = client_info.json()["UserId"]
+            self.name    = client_info.json()["Name"]
 
             return {
                 "id": self.user_id,
@@ -46,9 +45,16 @@ class RobloxAccount:
             }
 
         except Exception as err:
-            self.logger.error(f"Failed to get account info | {err}")
-            return False
 
+            ban_test = requests.get(url="https://locale.roblox.com/v1/locales", headers=self.headers)
+            if "User is moderated" in ban_test.text:
+                self.logger.critical("An account has been terminated")
+                raise AccountTerminatedException
+            else:
+                self.logger.error(f"Failed to get account info | {err}")
+                self.logger.debug(client_info.text)
+
+            return False
 
     def getRobux(self) -> int:
         """
@@ -61,7 +67,6 @@ class RobloxAccount:
         client_robux = requests.get(f"https://economy.roblox.com/v1/users/{self.user_id}/currency", headers=self.headers)
         return client_robux.json()["robux"]
 
-
     def getAllGroups(self) -> Dict:
         """
         Gets the groups the account is in along with the roles the account has
@@ -72,7 +77,6 @@ class RobloxAccount:
 
         group_roles = requests.get(f"https://groups.roblox.com/v1/users/{self.user_id}/groups/roles", headers = self.headers)
         return group_roles.json()
-
 
     def checkIfInGroup(self, group_id: int) -> dict:
         """
@@ -220,7 +224,7 @@ class RobloxAccount:
         headers = self.headers
         headers["x-csrf-token"] = self.csrf_token
         headers["Accept"] = "*/*"
-        headers["Pragma"] =  "no-cache"
+        headers["Pragma"] = "no-cache"
         headers["Origin"] = "create.roblox.com"
         headers["Referer"] = "https://create.roblox.com/"
 
@@ -241,21 +245,31 @@ class RobloxAccount:
             files={"fileContent": (bin_file.name, bin_file, "image/png"), "request": (None, request_data)},
         )
 
-        if upload_req.ok:
-            while True:
-                op_lookup = requests.get(
-                    url=f"https://apis.roblox.com/assets/user-auth/v1/{upload_req.json()['path']}",
-                    headers=headers
-                )
-                print(op_lookup.ok)
-                if op_lookup.ok:
+        while True:
+            op_lookup = requests.get(
+                url=f"https://apis.roblox.com/assets/user-auth/v1/{upload_req.json()['path']}",
+                headers=headers
+            )
+            self.logger.debug(op_lookup.ok)
+            self.logger.debug(op_lookup.status_code)
+            self.logger.debug(op_lookup.text)
+            if op_lookup.ok:
 
-                    if op_lookup.json().get("done"):
-                        asset_id =  op_lookup.json()["response"]["assetId"]
-                        release_item = self.releaseAsset(asset_id=asset_id, price= rel_price)
-                        return op_lookup.json()
-        else:
-            if "InsufficientFunds" in upload_req.text:
+                if op_lookup.json().get("done"):
+                    asset_id = op_lookup.json()["response"]["assetId"]
+                    release_item = self.releaseAsset(asset_id=asset_id, price=rel_price)
+                    return op_lookup.json()
+
+            elif op_lookup.status_code == 429:
+                time.sleep(2)
+
+            elif "InsufficientFunds" in upload_req.text:
                 raise InsufficientFundsException(upload_req.json())
 
-            return False
+            elif "User is moderated" in upload_req.text:
+                raise AccountTerminatedException("The account has been terminated")
+
+            else:
+                return False
+
+

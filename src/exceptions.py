@@ -2,12 +2,21 @@ class InvalidCredentialsError(Exception):
     """ 
     Raised if credentials provided are invalid 
     """
-    
-    pass 
+
+    pass
+
 
 class InvalidConfigException(Exception):
     """ 
     Raised if the config requested does not exist
+    """
+
+    pass
+
+
+class AccountTerminatedException(Exception):
+    """
+    Raised if the account is terminated
     """
 
     pass
@@ -18,14 +27,15 @@ class InvalidWebhookException(Exception):
     Raised if webhook provided is invalid
     """
 
-    pass 
+    pass
+
 
 class AccountNotInGroup(Exception):
     """ 
     Raised if account is not in the specified group ID
     """
 
-    pass 
+    pass
 
 
 class LowRankException(Exception):
@@ -35,6 +45,7 @@ class LowRankException(Exception):
 
     pass
 
+
 class InvalidAssetId(Exception):
     """ 
     Raised if the asset ID provided is invalid
@@ -42,18 +53,19 @@ class InvalidAssetId(Exception):
 
     pass
 
-class InvalidAssetType(Exception):
 
-    """ 
+class InvalidAssetType(Exception):
+    """
     Raised if the asset type provided is invalid
     """
 
     pass
 
+
 class AssetDetailsNotFound(Exception):
     """ 
     Raised if the details of an asset are not found
-    """ 
+    """
 
     pass
 
@@ -69,6 +81,6 @@ class InvalidGroupID(Exception):
 class InsufficientFundsException(Exception):
     """ 
     Raised if Funds are not sufficient 
-    """ 
+    """
 
     pass

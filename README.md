@@ -1,5 +1,5 @@
-# RoDrobe - A roblox clothing bot (WIP)
-A discord roblox clothing bot for your group. 
+# RoDrobe - A roblox clothing bot [WIP]
+A discord roblox clothing bot for your group.If you have any requests/features in mind which are not already implemented, please let me know.
 
 ![](https://cdn.discordapp.com/attachments/1154068857879793674/1155502142161956905/image.png)
 ## Features
@@ -54,6 +54,9 @@ bot_token = ""
 item_price = 5
 # # The robux price for a t-shirt which will be used when a tshirt is republished
 tshirt_price = 5
+
+[other]
+debug_mode=false
 ```
 4) Rename the  `.toml.example` file to `.toml` once you have filled in the appropriate fields
 5) Create a file called `description.txt` in the `config` folder and write a description. This will be used for when the bot uploads clothing
@@ -62,6 +65,7 @@ tshirt_price = 5
 $ python3 main.py
 ```
 
-## TODO:
-- Add more clothing/group configurable functions
-- Ratelimit handler
+# TODO:
+  - fix/make improvements to the mass uploader
+  - Add a roblox front page scraper/uploader
+  - Add color to logs

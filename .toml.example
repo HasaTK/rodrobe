@@ -14,3 +14,6 @@ bot_token = ""
 item_price = 5
 # The robux price for a t-shirt which will be used when a tshirt is republished
 tshirt_price = 5
+
+[other]
+debug_mode=false

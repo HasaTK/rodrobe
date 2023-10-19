@@ -12,8 +12,8 @@ class DownloadView(discord.ui.View):
         self.embed = embed
         self.asset_id = asset_id
 
-    @discord.ui.button(label = "Remove Watermark", style = discord.ButtonStyle.blurple)
-    async def removeWatermark(self, interaction:discord.Interaction, button:discord.ui.Button):
+    @discord.ui.button(label = "Remove Watermark", style=discord.ButtonStyle.blurple)
+    async def removeWatermark(self, interaction: discord.Interaction, button:  discord.ui.Button):
         button.disabled = True
         nwFile = assets.stripAssetWatermark(self.asset_id)["file"]
 

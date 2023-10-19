@@ -1,5 +1,7 @@
 import requests
 import time
+import asyncio
+import threading
 import random
 import logging 
 
@@ -8,6 +10,15 @@ from src.clients        import accounts
 from src.exceptions     import InvalidCredentialsError, AccountNotInGroup, LowRankException
 from src                import config
 from src.adapters       import webhooks
+from src.clients        import discord
+
+
+def start_discord_bot():
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    loop.run_until_complete(discord.main())
 
 class Monitor:
 
@@ -52,7 +63,7 @@ class Monitor:
             "limit": 25,
             "transactionType":"Sale"
         }
-        self.logger.info("Checking for new sales..")
+        self.logger.debug("Checking for new sales..")
 
         salesPage = requests.get(
             url=f"https://economy.roblox.com/v2/groups/{self.group_id}/transactions",
@@ -64,7 +75,7 @@ class Monitor:
 
         if salesData[0]["id"] == self.last_cached_id:
 
-            self.logger.info("Checked for sales with 0 new sales found.")
+            self.logger.debug("Checked for sales with 0 new sales found.")
             return 
 
         if self.last_cached_id:
@@ -122,7 +133,7 @@ class Monitor:
                                     ],
                                     "thumbnail": {
                                         "url": player_headshot,
-                                        "proxy_url":player_headshot,
+                                        "proxy_url": player_headshot,
                                     },
                                     "footer": {
                                         "text": f"Currency converted using rates: ${rates} / 1k (2DP)"
@@ -156,6 +167,8 @@ class Monitor:
         except Exception as e:
             self.logger.error(e)
             return
+
+        threading.Thread(target=start_discord_bot, args=(),).start()
 
         while True:
             try:
