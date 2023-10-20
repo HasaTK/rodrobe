@@ -20,7 +20,7 @@ The bot will tell you if you are missing an argument. For more guidance on these
 - set - Sets the config specified to a given value 
 - help - Gives a list of all commands
 - sgroup - Republishes all the assets an existing group has to your group
-
+- accounts - Shows the accounts connected along with the robux they have
 ## Installation
 1) Install [the latest version of python](https://www.python.org/)
 2) Open your terminal and run the following:
@@ -57,6 +57,8 @@ tshirt_price = 5
 
 [other]
 debug_mode=false
+# The time the program will retry after if it a ratelimit occurs
+ratelimit_wait_time=8
 ```
 4) Rename the  `.toml.example` file to `.toml` once you have filled in the appropriate fields
 5) Create a file called `description.txt` in the `config` folder and write a description. This will be used for when the bot uploads clothing
@@ -67,5 +69,7 @@ $ python3 main.py
 
 # TODO:
   - fix/make improvements to the mass uploader
+  - Add docs for commands
+  - Make uploader & holder globals
   - Add a roblox front page scraper/uploader
   - Add color to logs

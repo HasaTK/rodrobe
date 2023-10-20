@@ -1,7 +1,8 @@
 import os 
 import json
 
-from toml           import load
+from toml import load
+from typing import Any
 
 cfg_file = load(".toml")
 
@@ -13,16 +14,12 @@ class EmbedColors:
     INFO = 0x4aafed
 
 
-if not os.path.isfile("src/cache/config.json"):
-    with open("src/cache/config.json","a") as file:
-        json.dump({},file)
 
-
-def is_whitelisted(user: any):
+def is_whitelisted(user: Any):
     """ 
     Check if a user is allowed to use the bot
 
-    :param any user:
+    :param Any user:
     :return: bool
     """
 
@@ -67,6 +64,12 @@ def cfg_get(key: str):
             return jfile[key]
         else:
             return None
-     
+
+
+def is_cached(asset_id: int) -> bool:
+    with open("src/cache/cached_ids.json") as file:
+        jfile = json.load(file)
+
+    return asset_id in jfile["ids"]
 
 

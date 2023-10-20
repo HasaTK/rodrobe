@@ -1,5 +1,5 @@
 import os
-
+import json
 import logging
 from src.app        import monitor
 from src.config     import cfg_file
@@ -15,6 +15,15 @@ logging.basicConfig(
     ]
 )
 
+def create_config(file_path, dump_obj={}):
+    if not os.path.isfile(file_path):
+        print(file_path)
+        with open(file_path, "a") as file:
+            json.dump(dump_obj, file)
+
+
+create_config("src/cache/config.json")
+create_config("src/cache/cached_ids.json", dump_obj={"ids":[]})
 
 def main():
     """
@@ -31,9 +40,9 @@ def main():
 
     try:
         new_monitor = monitor.Monitor(
-            holder_cookie   = config["group"]["holder_cookie"],
-            uploader_cookie = config["group"]["uploader_cookie"],
-            group_id        = config["group"]["group_id"],
+            holder_cookie   =config["group"]["holder_cookie"],
+            uploader_cookie =config["group"]["uploader_cookie"],
+            group_id        =config["group"]["group_id"],
         )
         new_monitor.load()
 

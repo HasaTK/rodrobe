@@ -17,3 +17,5 @@ tshirt_price = 5
 
 [other]
 debug_mode=false
+# The time the program will retry after if it a ratelimit occurs
+ratelimit_wait_time=8

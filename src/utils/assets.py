@@ -1,16 +1,19 @@
 import requests
 import re
+import logging
 import os
+import time
 import uuid
 
 from hashlib        import sha256
-
 from PIL            import Image
-from src.exceptions import InvalidAssetId
-
-from typing import Optional
+from src.exceptions import InvalidAssetId, AssetDetailsNotFound, InvalidAssetType
+from src.config     import cfg_file
+from typing import Optional, Dict, Any
 
 x_csrf_token = "wXbG1Fd"
+logger = logging.getLogger(__name__)
+
 
 def fetchAssetBytes(asset_id: int):
     """ 
@@ -65,7 +68,11 @@ def getAssetDetails(asset_id: int, csrf_token: Optional[str] = None):
 
     elif details.ok:
         return details.json()['data'][0]
-    
+
+    elif details.status_code == 429:
+        logger.warning("Ratelimited whilst attempting to grab asset details. Retrying...")
+        time.sleep(cfg_file["other"]["ratelimit_wait_time"] or 5)
+        return getAssetDetails(asset_id=asset_id, csrf_token=x_csrf_token)
     return None
 
 
@@ -132,3 +139,109 @@ def stripAssetWatermark(asset_id: int):
     # Will use the file for something later
     os.remove(file_name)
     return {"type": asset_bytes["type"], "file": res_name}
+
+
+# TODO: make uploader a global
+def republish_asset(
+    asset_id: int,
+    uploader,
+    remove_watermark=True,
+) -> Any:
+    """
+    Republishes an asset
+
+    :param asset_id:
+    :param uploader:
+    :param bool remove_watermark:
+
+    """
+
+    if remove_watermark:
+        asset = stripAssetWatermark(asset_id=asset_id)
+        if not asset:
+            # most likely a  tshirt
+            return republish_asset(asset_id=asset_id, remove_watermark=False, uploader=uploader)
+        asset_path = asset["file"]
+
+    else:
+
+        asset = fetchAssetBytes(asset_id)
+        asset_path = "src/cache/" + str(sha256(str(asset_id).encode("utf-8")).hexdigest()) + ".png"
+
+        with open(asset_path, "wb") as file:
+            file.write(asset["bytes"])
+
+    asset_attempts = 0
+    while True:
+        asset_details = getAssetDetails(asset_id)
+        asset_attempts += 1
+
+        if asset_details:
+            break
+        elif asset_attempts > 5:
+            raise AssetDetailsNotFound("Unable to find asset details")
+        else:
+            time.sleep(1.5)
+
+    if asset["type"].lower() == "shirt graphic" or asset["type"] == "TShirt":
+        asset_type = "TShirt"
+    elif asset:
+        asset_type = asset["type"].lower().capitalize()
+
+    if not asset_type.lower() in ("shirt", "pants", "tshirt"):
+        raise InvalidAssetType("Asset Type provided is not valid")
+
+    republish = uploader.uploadGroupAsset(
+        group_id=cfg_file["group"]["group_id"],
+        asset_type=asset_type,
+        asset_name=asset_details["name"],
+        bin_file=open(asset_path, "rb"),
+    )
+
+    os.remove(asset_path)
+
+    return republish
+
+
+def get_fp_assets(
+    subcategory: str,
+    limit: int = 120,
+    cursor: Optional[str] = None,
+    keyword: Optional[str] = None
+) -> Dict:
+
+    """
+    Gets frontpage/popular items assets
+
+    :param limit:
+    :param subcategory: The subcategory(e.g. ClassicShirts,ClassicPants)
+    :param Optional cursor:
+    :param Optional keyword:
+
+    :return: Dict
+
+    """
+    search_req = requests.get(
+        url="https://catalog.roblox.com/v1/search/items",
+        params={
+            "category": "Clothing",
+            "limit": limit,
+            "salesTypeFilter": 1,
+            "subcategory": subcategory,
+            "cursor": cursor,
+            "keyword": keyword
+        },
+    )
+
+    if search_req.ok:
+        return search_req.json()
+
+    elif search_req.status_code == 429:
+        logger.error("Ratelimited while attempting to scrape fp assets... Retrying..")
+        time.sleep(cfg_file["other"]["ratelimit_wait_time"] or 4)
+        return get_fp_assets(subcategory=subcategory, limit=limit,  cusror=cursor, keyword=keyword)
+
+    else:
+        logger.error(f"Asset scrape error:\nRequest status code: {search_req.status_code}\nText response: {search_req.text}\nHeaders:\n{search_req.headers}")
+        raise Exception(search_req.text)
+

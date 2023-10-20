@@ -32,7 +32,8 @@ class Download(commands.Cog):
                 file.write(assetBytes['bytes'])
 
             asset_details = assets.getAssetDetails(asset_id)
-            embed_description = f"**Type:** {assetBytes['type']}\n**Asset:** [{asset_details['name'] if asset_details else 'asset_name'}](https://www.roblox.com/catalog/{asset_id})"
+            embed_description = (f"**Type:** {assetBytes['type']}"
+                                 f"\n**Asset:** [{asset_details['name'] if asset_details else 'asset_name'}](https://www.roblox.com/catalog/{asset_id})")
             
 
             if asset_details:

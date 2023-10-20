@@ -20,6 +20,7 @@ def start_discord_bot():
 
     loop.run_until_complete(discord.main())
 
+
 class Monitor:
 
     def __init__(
@@ -71,7 +72,6 @@ class Monitor:
             headers=self.holder.headers
         )
         salesData= salesPage.json()["data"]
-        print(salesPage.status_code)
 
         if salesData[0]["id"] == self.last_cached_id:
 

@@ -5,7 +5,7 @@ import time
 
 from src                    import config
 from src.exceptions         import InvalidAssetType, InsufficientFundsException, AccountTerminatedException
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 
 
 class RobloxAccount:
@@ -24,7 +24,7 @@ class RobloxAccount:
         self.csrf_token = self.getCsrfToken()
         self.getClientInfo()
 
-    def getClientInfo(self) -> Dict:
+    def getClientInfo(self) -> Any:
 
         """
         Gets & initializes user id and name of the client and returns it in a dict
@@ -78,7 +78,7 @@ class RobloxAccount:
         group_roles = requests.get(f"https://groups.roblox.com/v1/users/{self.user_id}/groups/roles", headers = self.headers)
         return group_roles.json()
 
-    def checkIfInGroup(self, group_id: int) -> dict:
+    def checkIfInGroup(self, group_id: int) -> int | bool:
         """
         Checks if the account is in the specified group id and returns a self explanatory dictionary
 
@@ -261,7 +261,7 @@ class RobloxAccount:
                     return op_lookup.json()
 
             elif op_lookup.status_code == 429:
-                time.sleep(2)
+                time.sleep(config.cfg_file["other"]["ratelimit_wait_time"] or 4)
 
             elif "InsufficientFunds" in upload_req.text:
                 raise InsufficientFundsException(upload_req.json())

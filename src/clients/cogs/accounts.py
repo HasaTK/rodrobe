@@ -21,18 +21,24 @@ class AccountCog(commands.Cog):
     @commands.check(config.is_whitelisted)
     async def accounts(self, ctx):
         try:
+            uploader_robux = self.uploader.getRobux()
+            uploads_avail  = int(uploader_robux / 10)
             embed = discord.Embed(
                 title="Accounts",
                 color=config.EmbedColors.INFO,
             )
             embed.add_field(
                 name="Uploader",
-                value=f"Name: [{self.uploader.name}](https://www.roblox.com/users/{self.uploader.user_id})\nRobux: {self.uploader.getRobux()}",
+                value=f"Name: [{self.uploader.name}](https://www.roblox.com/users/{self.uploader.user_id})"
+                      f"\nRobux: {uploader_robux}"
+                      f"\nUploads Available: {uploads_avail}",
                 inline=False
             )
             embed.add_field(
                 name="Holder",
-                value=f"Name: [{self.holder.name}](https://www.roblox.com/users/{self.holder.user_id})\nRobux: {self.holder.getRobux()}"
+                value=f"Name: [{self.holder.name}](https://www.roblox.com/users/{self.holder.user_id})"
+                      f"\nRobux: {self.holder.getRobux()}",
+                inline=False
             )
 
             await ctx.reply(embed=embed)
