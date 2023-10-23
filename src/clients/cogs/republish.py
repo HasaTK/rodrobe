@@ -37,13 +37,13 @@ class Republish(commands.Cog):
             )
 
             message = await ctx.reply(embed=embed)
-            repubAsset = republish_asset(asset_id=asset_id,remove_watermark=remove_watermark,uploader=self.uploader)
+            repubAsset = assets.republish_asset(asset_id=asset_id,remove_watermark=remove_watermark,uploader=self.uploader)
             if repubAsset:
 
                 pub_id = repubAsset["response"]["assetId"] 
             
-                embed.title = "Republished asset successfully",
-                embed.color = config.EmbedColors.SUCCESS,
+                embed.title = "Republished asset successfully"
+                embed.color = config.EmbedColors.SUCCESS
                 embed.description = f"The republished asset can be found [here](https://www.roblox.com/catalog/{pub_id})"
                 
 
@@ -51,8 +51,8 @@ class Republish(commands.Cog):
 
         except InvalidAssetId:
             
-            embed.title = "Invalid Asset Id",
-            embed.color = config.EmbedColors.ERROR,
+            embed.title = "Invalid Asset Id"
+            embed.color = config.EmbedColors.ERROR
             embed.description = "The asset id provided is invalid"
 
             await message.edit(embed = embed)
@@ -60,15 +60,15 @@ class Republish(commands.Cog):
         except AssetDetailsNotFound:
 
             self.logger.error("Asset details were not found")
-            embed.title = "Error",
-            embed.color = config.EmbedColors.ERROR,
+            embed.title = "Error"
+            embed.color = config.EmbedColors.ERROR
             embed.description = "Error while attempting to attempting to get asset details."
             
 
             await message.edit(embed=embed)
         except InvalidAssetType:
-            embed.title="Invalid Asset Type",
-            embed.color=config.EmbedColors.ERROR,
+            embed.title="Invalid Asset Type"
+            embed.color=config.EmbedColors.ERROR
             embed.description="The asset type provided is invalid"
             
 
@@ -78,8 +78,8 @@ class Republish(commands.Cog):
             
             self.logger.error(e)
 
-            embed.title = "Error",
-            embed.description=f'```{e}```',
+            embed.title = "Error"
+            embed.description=f'```{e}```'
             embed.color= config.EmbedColors.ERROR
         
 
@@ -140,22 +140,22 @@ class Republish(commands.Cog):
                     
                     else:
                         if "Failed to pay the associated fees" in str(request.text) or "InsufficientFunds" in str(request.text):
-                            embed.title ="Report",
-                            embed.color=config.EmbedColors.ERROR,
+                            embed.title ="Report"
+                            embed.color=config.EmbedColors.ERROR
                             embed.description=f"A total of {upload_count} assets were uploaded before running out of robux."
                             
                             await ctx.reply(embed=embed)
 
                         elif "user is moderated" in str(request.text).lower():
-                            embed.title="Report",
-                            embed.color=config.EmbedColors.ERROR,
+                            embed.title="Report"
+                            embed.color=config.EmbedColors.ERROR
                             embed.description=f"A total of {upload_count} assets were uploaded before being terminated."
 
                             await ctx.reply(embed=embed)
 
                         else:
-                            embed.title = "Report",
-                            embed.color=config.EmbedColors.ERROR,
+                            embed.title = "Report"
+                            embed.color=config.EmbedColors.ERROR
                             embed.description=f"A total of {upload_count} assets were before encountering an error.\nError:\n```{request.text}```"
 
                             await ctx.reply(embed=embed)
@@ -165,15 +165,15 @@ class Republish(commands.Cog):
                     break
 
             except AccountTerminatedException:
-                embed.title="Account Terminated",
-                embed.color=config.EmbedColors.ERROR,
+                embed.title="Account Terminated"
+                embed.color=config.EmbedColors.ERROR
                 embed.description=f"A total of {upload_count} assets were uploaded before being terminated."
 
                 await ctx.reply(embed=embed)
 
             except Exception as e:
-                embed.title="Error",
-                embed.description=f'```{e}```',
+                embed.title="Error"
+                embed.description=f'```{e}```'
                 embed.color=config.EmbedColors.ERROR
         
 

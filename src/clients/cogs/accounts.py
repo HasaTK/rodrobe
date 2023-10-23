@@ -25,7 +25,7 @@ class AccountCog(commands.Cog):
             uploads_avail  = int(uploader_robux / 10)
             embed = discord.Embed(
                 title="Accounts",
-                color=config.EmbedColors.INFO,
+                color=config.EmbedColors.INFO
             )
             embed.add_field(
                 name="Uploader",
