@@ -73,7 +73,8 @@ def getAssetDetails(asset_id: int, csrf_token: Optional[str] = None):
         logger.warning("Ratelimited whilst attempting to grab asset details. Retrying...")
         time.sleep(cfg_file["other"]["ratelimit_wait_time"] or 5)
         return getAssetDetails(asset_id=asset_id, csrf_token=x_csrf_token)
-    return None
+    else:
+        return None
 
 
 def getGroupedAssetDetails(asset_list, csrf_token: Optional[str] = None):

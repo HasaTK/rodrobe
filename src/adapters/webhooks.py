@@ -2,7 +2,7 @@ import requests
 
 from typing import Optional 
 from src    import config
-from abc    import ABC,abstractmethod
+from abc    import ABC, abstractmethod
 
 from src.exceptions import InvalidWebhookException
 

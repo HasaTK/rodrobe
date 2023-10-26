@@ -5,24 +5,20 @@ A discord roblox clothing bot for your group.If you have any requests/features i
 ## Features
   - Clothing uploader 
   - Group clothing stealer
-  - Auto robux to USD converter with configurable rates
+  - Auto robux to USD converter with configurable rates 
+     
+    (Shows for every command with robux amount displayed + the sales notifier )
   - Clothing downloader
   - Watermark Remover
   - Sales notifier
   - Group Balance viewer
 
 ## Commands
-The bot will tell you if you are missing an argument. For more guidance on these commands, type !command_here. 
-- steal  - Uploads the asset to your group
-- revenue - Gives an overview of the groups revenue(conversion included)
-- download - Shows template of an asset
-- get - Gets the config specified
-- set - Sets the config specified to a given value 
-- help - Gives a list of all commands
-- sgroup - Republishes all the assets an existing group has to your group
-- accounts - Shows the accounts connected along with the robux they have
+Check out the documentation (located in the "docs" folder if the link doesn't work) for a description on what each command does and how to use them
+
+
 ## Installation
-1) Install [the latest version of python](https://www.python.org/)
+1) Install [python 3.11](https://www.python.org/downloads/release/python-3115/)
 2) Open your terminal and run the following:
 ```console
 $ git clone https://github.com/soakingdry/rodrobe

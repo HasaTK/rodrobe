@@ -120,7 +120,9 @@ class Monitor:
                                     "fields":[
                                         {
                                             "name": "Player",
-                                            "value": f"**Username: [{sale['agent']['name']}](https://www.roblox.com/users/{sale['agent']['id']}/profile)**\n**User ID: {str(sale['agent']['id'])}**"
+                                            "value": f"**Username: [{sale['agent']['name']}](https://www.roblox.com"
+                                                     f"/users/{sale['agent']['id']}/profile)**\n**"
+                                                     f"User ID: {str(sale['agent']['id'])}**"
                                         },
                                         {
                                             "name": "Item",
@@ -128,7 +130,8 @@ class Monitor:
                                         },
                                         {
                                             "name": "Amount",
-                                            "value": f"**A/T: {robuxAT} (${robux_price(robuxAT,rates)})**\n**B/T: {round(robuxBT)} (${robux_price(robuxBT, rates)})**"
+                                            "value": f"**A/T: {robuxAT} (${robux_price(robuxAT,rates)})**\n**B/T: "
+                                            f"{round(robuxBT)} (${robux_price(robuxBT, rates)})**"
                                         }
                                     ],
                                     "thumbnail": {
