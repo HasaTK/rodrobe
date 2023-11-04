@@ -173,7 +173,9 @@ class RobloxAccount:
                 if asset["itemType"] == "Asset":
                    cached_assets.append(asset)
 
-
+        elif fetchData.status_code == 429:
+            time.sleep(config.cfg_file["other"]["ratelimit_wait_time"] or 4)
+            return self.getGroupAssets(group_id=group_id, limit=limit, cursor=cursor)
 
         return {"data":cached_assets,"obj":fetchData}
 
@@ -205,6 +207,13 @@ class RobloxAccount:
             headers=headers
         )
 
+        if "InsufficientFunds" in release_request.text or "Failed to pay the associated fees" in release_request.text:
+            raise InsufficientFundsException(release_request.json())
+
+        if release_request.status_code == 429:
+            time.sleep(config.cfg_file["other"]["ratelimit_wait_time"] or 4)
+            return self.releaseAsset(asset_id=asset_id, price=price)
+
         if not release_request.ok:
             raise Exception(release_request.text)
 
@@ -232,12 +241,20 @@ class RobloxAccount:
             raise InvalidAssetType("Asset type provided is invalid. Double check capitalization")
         else:
             rel_price = config.cfg_file["assets"]["tshirt_price"] if asset_type == "TShirt" else config.cfg_file["assets"]["item_price"]
-            expectedPrice = 0 if asset_type== "TShirt" else 10
+            expectedPrice = 0 if asset_type == "TShirt" else 10
 
         with open("config/description.txt", "r") as file:
             description = file.read()
 
-        request_data = json.dumps({"displayName":asset_name,"description":description,"assetType":asset_type,"creationContext":{"creator":{"groupId":group_id},"expectedPrice":expectedPrice}})
+        request_data = json.dumps({
+            "displayName": asset_name,
+            "description": description,
+            "assetType": asset_type,
+            "creationContext": {
+                "creator": {"groupId": group_id},
+                "expectedPrice": expectedPrice
+            }
+        })
 
         upload_req = requests.post(
             url="https://apis.roblox.com/assets/user-auth/v1/assets",
@@ -245,14 +262,20 @@ class RobloxAccount:
             files={"fileContent": (bin_file.name, bin_file, "image/png"), "request": (None, request_data)},
         )
 
+        if "InsufficientFunds" in upload_req.text or "Failed to pay the associated fees" in upload_req.text:
+            raise InsufficientFundsException(upload_req.json())
+
+        elif "User is moderated" in upload_req.text:
+            raise AccountTerminatedException("The account has been terminated")
+
         while True:
             op_lookup = requests.get(
                 url=f"https://apis.roblox.com/assets/user-auth/v1/{upload_req.json()['path']}",
                 headers=headers
             )
-            self.logger.debug(op_lookup.ok)
-            self.logger.debug(op_lookup.status_code)
             self.logger.debug(op_lookup.text)
+            self.logger.debug(op_lookup.status_code)
+
             if op_lookup.ok:
 
                 if op_lookup.json().get("done"):
@@ -263,13 +286,8 @@ class RobloxAccount:
             elif op_lookup.status_code == 429:
                 time.sleep(config.cfg_file["other"]["ratelimit_wait_time"] or 4)
 
-            elif "InsufficientFunds" in upload_req.text:
-                raise InsufficientFundsException(upload_req.json())
-
-            elif "User is moderated" in upload_req.text:
-                raise AccountTerminatedException("The account has been terminated")
-
             else:
+                self.logger.error(op_lookup.text)
                 return False
 
 

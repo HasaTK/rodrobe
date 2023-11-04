@@ -14,6 +14,9 @@ bot_token = ""
 item_price = 5
 # The robux price for a t-shirt which will be used when a tshirt is republished
 tshirt_price = 5
+# This checks if an asset has been cached by rodrobe.If the asset is cached then rodrobe will ignore the asset
+# This config only applies to the sgroup and scrape command.
+ignore_duplicates=true
 
 [other]
 debug_mode=false

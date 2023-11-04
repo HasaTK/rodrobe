@@ -3,7 +3,6 @@ import json
 import logging
 from src.app        import monitor
 from src.config     import cfg_file
-from toml           import load
 
 
 logging.basicConfig(
@@ -15,6 +14,7 @@ logging.basicConfig(
     ]
 )
 
+
 def create_config(file_path, dump_obj={}):
     if not os.path.isfile(file_path):
         print(file_path)
@@ -23,7 +23,8 @@ def create_config(file_path, dump_obj={}):
 
 
 create_config("src/cache/config.json")
-create_config("src/cache/cached_ids.json", dump_obj={"ids":[]})
+create_config("src/cache/cached_ids.json", dump_obj={"ids": []})
+
 
 def main():
     """
@@ -32,17 +33,17 @@ def main():
 
     logger = logging.getLogger(__name__)
 
-    config = load(".toml")
-    logger.info("Starting program..")
+    logger.info("Starting RoDrobe v1.01")
+
     if not os.path.isfile("config/description.txt"):
         logger.error("Create a text file called 'description' in the config folder. This file will be used when assets are being uploaded. ")
         return
 
     try:
         new_monitor = monitor.Monitor(
-            holder_cookie   =config["group"]["holder_cookie"],
-            uploader_cookie =config["group"]["uploader_cookie"],
-            group_id        =config["group"]["group_id"],
+            holder_cookie=cfg_file["group"]["holder_cookie"],
+            uploader_cookie=cfg_file["group"]["uploader_cookie"],
+            group_id=cfg_file["group"]["group_id"],
         )
         new_monitor.load()
 

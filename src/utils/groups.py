@@ -1,9 +1,9 @@
 import requests
 from src.exceptions import InvalidGroupID
 
-def getGroupInfo(group_id: int):
 
-    """ 
+def getGroupInfo(group_id: int):
+    """
     Gets info on the group id provided 
 
     :param int group_id
@@ -16,4 +16,3 @@ def getGroupInfo(group_id: int):
         raise InvalidGroupID("Group ID provided is invalid")
 
     return groupInfo.json()
-    

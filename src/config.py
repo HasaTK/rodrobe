@@ -1,18 +1,17 @@
-import os 
+import os
 import json
 
 from toml import load
 from typing import Any
 
-cfg_file = load(".toml")
+with open(".toml", encoding="utf-8") as file:
+    cfg_file = load(file)
 
 
 class EmbedColors:
-
     ERROR = 0xcd2934
     SUCCESS = 0x00ff6e
     INFO = 0x4aafed
-
 
 
 def is_whitelisted(user: Any):
@@ -32,8 +31,7 @@ def is_whitelisted(user: Any):
 
 
 def cfg_set(key, value):
-
-    """ 
+    """
     Sets a value of the specified key from the cache config
     
     :param str key:
@@ -41,8 +39,8 @@ def cfg_set(key, value):
 
 
     """
-    with open("src/cache/config.json","r+") as file:
-        jfile  = json.load(file)
+    with open("src/cache/config.json", "r+") as file:
+        jfile = json.load(file)
         jfile[key] = value
         file.seek(0)
         json.dump(jfile, file)
@@ -57,8 +55,8 @@ def cfg_get(key: str):
     :return: value
 
     """
-    with open("src/cache/config.json","r") as file:
-        jfile  = json.load(file)
+    with open("src/cache/config.json", "r") as file:
+        jfile = json.load(file)
 
         if jfile.get(key):
             return jfile[key]
@@ -73,3 +71,14 @@ def is_cached(asset_id: int) -> bool:
     return asset_id in jfile["ids"]
 
 
+def add_cache(asset_id: int):
+
+    if is_cached(asset_id):
+        return
+
+    with open("src/cache/cached_ids.json", "r+") as file:
+        jfile = json.load(file)
+        jfile["ids"].append(asset_id)
+        file.seek(0)
+        json.dump(jfile, file)
+        file.truncate()

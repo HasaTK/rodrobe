@@ -1,8 +1,8 @@
-import discord
 import logging
 
 from discord.ext    import commands
 from src            import config
+
 
 class ping(commands.Cog):
 
@@ -17,7 +17,6 @@ class ping(commands.Cog):
     
     @commands.command(help="Testing command 🏓")
     @commands.check(config.is_whitelisted)
-
     async def ping(self, ctx):        
         await ctx.reply("Pong 🏓")
 

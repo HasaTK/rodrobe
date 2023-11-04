@@ -28,7 +28,7 @@ class Download(commands.Cog):
 
             assetBytes = assets.fetchAssetBytes(asset_id=asset_id)
             file_name = sha256(str(asset_id).encode("utf-8")).hexdigest() + ".png"
-            with open(f"src/cache/{file_name}", "wb") as file:
+            with open(f"src/cache/assetdata/{file_name}", "wb") as file:
                 file.write(assetBytes['bytes'])
 
             asset_details = assets.getAssetDetails(asset_id)
@@ -46,7 +46,7 @@ class Download(commands.Cog):
                 description=embed_description
             )
 
-            file = discord.File(f"src/cache/{file_name}", filename="asset.png")
+            file = discord.File(f"src/cache/assetdata/{file_name}", filename="asset.png")
             embed.set_image(url="attachment://asset.png")
 
             if str(assetBytes['type']).lower() in ('shirt', 'pants'):
@@ -56,7 +56,7 @@ class Download(commands.Cog):
 
             await ctx.reply(embed=embed, file=file, view=view)
 
-            os.remove(f"src/cache/{file_name}")
+            os.remove(f"src/cache/assetdata/{file_name}")
 
         except InvalidAssetId:
             await ctx.reply("Asset id provided is invalid")

@@ -119,10 +119,9 @@ def stripAssetWatermark(asset_id: int):
     """
 
     asset_bytes = fetchAssetBytes(asset_id)
-    file_name = f"src/cache/{str(uuid.uuid4())}.png"
+    file_name = f"src/cache/assetdata/{str(uuid.uuid4())}.png"
 
-    with open(file_name,"wb") as file:
-        
+    with open(file_name, "wb") as file:
         file.write(asset_bytes["bytes"]) 
     
     asset = Image.open(file_name)
@@ -134,7 +133,7 @@ def stripAssetWatermark(asset_id: int):
         return False
 
     asset.paste(template, (0, 0), mask=template)
-    res_name = "src/cache/STRIP-"+sha256(str(uuid.uuid4()).encode("utf-8")).hexdigest()+".png"
+    res_name = "src/cache/assetdata/STRIP-"+sha256(str(uuid.uuid4()).encode("utf-8")).hexdigest()+".png"
     asset.save(res_name)
 
     # Will use the file for something later
@@ -167,7 +166,7 @@ def republish_asset(
     else:
 
         asset = fetchAssetBytes(asset_id)
-        asset_path = "src/cache/" + str(sha256(str(asset_id).encode("utf-8")).hexdigest()) + ".png"
+        asset_path = "src/cache/assetdata/" + str(sha256(str(asset_id).encode("utf-8")).hexdigest()) + ".png"
 
         with open(asset_path, "wb") as file:
             file.write(asset["bytes"])
@@ -234,13 +233,14 @@ def get_fp_assets(
         },
     )
 
+    logger.info(search_req.text)
     if search_req.ok:
         return search_req.json()
 
     elif search_req.status_code == 429:
         logger.error("Ratelimited while attempting to scrape fp assets... Retrying..")
         time.sleep(cfg_file["other"]["ratelimit_wait_time"] or 4)
-        return get_fp_assets(subcategory=subcategory, limit=limit,  cusror=cursor, keyword=keyword)
+        return get_fp_assets(subcategory=subcategory, limit=limit, cursor=cursor, keyword=keyword)
 
     else:
         logger.error(f"Asset scrape error:\nRequest status code: {search_req.status_code}\nText response: {search_req.text}\nHeaders:\n{search_req.headers}")

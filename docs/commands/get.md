@@ -1,6 +1,6 @@
 # Get Command
 
-### Aliases: s,
+### Aliases: g,
 
 This is a config command. It outputs the value of the given config
 
@@ -13,4 +13,4 @@ This is a config command. It outputs the value of the given config
 
 
 ## Example Usage:
-    !get rates 
+    !get rates

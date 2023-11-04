@@ -1,6 +1,9 @@
 src/cache/* 
 !src/cache/.empty
 !src/cache/templates
+
+src/cache/assetdata
+!src/cache/assetdata/README.md
 description.txt
 *.sample.png
 # Byte-compiled / optimized / DLL files

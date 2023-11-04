@@ -1,5 +1,6 @@
-# RoDrobe - A roblox clothing bot [WIP]
-A discord roblox clothing bot for your group.If you have any requests/features in mind which are not already implemented, please let me know.
+# RoDrobe 
+Rodrobe is a discord roblox clothing bot for your group and  comes with many features which
+can be used to increase your income if used correctly
 
 ![](https://cdn.discordapp.com/attachments/1154068857879793674/1155502142161956905/image.png)
 ## Features
@@ -12,9 +13,10 @@ A discord roblox clothing bot for your group.If you have any requests/features i
   - Watermark Remover
   - Sales notifier
   - Group Balance viewer
+  - Popular items scraper / reuploader
 
 ## Commands
-Check out the documentation (located in the "docs" folder if the link doesn't work) for a description on what each command does and how to use them
+Check out the [documentation](https://github.com/soakingdry/rodrobe/tree/main/docs/commands) (located in the "docs" folder if the link doesn't work) for a description on what each command does and how to use them
 
 
 ## Installation
@@ -51,6 +53,10 @@ item_price = 5
 # # The robux price for a t-shirt which will be used when a tshirt is republished
 tshirt_price = 5
 
+# This checks if an asset has been cached by rodrobe.If the asset is cached then rodrobe will ignore the asset
+# This config only applies to the sgroup and scrape command.
+ignore_duplicates=true 
+
 [other]
 debug_mode=false
 # The time the program will retry after if it a ratelimit occurs
@@ -63,8 +69,6 @@ ratelimit_wait_time=4
 $ python3 main.py
 ```
 
-# TODO:
-  - Add docs for commands
-  - Make uploader & holder globals
-  - Add a roblox front page scraper/uploader [WIP]
-  - Add color to logs
+## TODO:
+   - Make uploader & holder accounts global instead of initializing them repeatedly 
+   - Script to clear cache
