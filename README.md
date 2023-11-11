@@ -1,4 +1,12 @@
 # RoDrobe
+
+
+![GitHub repo size](https://img.shields.io/github/repo-size/soakingdry/rodrobe)
+![GitHub issues](https://img.shields.io/github/issues/soakingdry/rodrobe)
+![GitHub stars](https://img.shields.io/github/stars/soakingdry/rodrobe)
+![GitHub forks](https://img.shields.io/github/forks/soakingdry/rodrobe)
+
+
 Rodrobe is a discord roblox clothing bot for your group and  comes with many features which
 can be used to increase your income if used correctly
 
