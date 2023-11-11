@@ -131,7 +131,6 @@ class RobloxAccount:
 
         get_token = requests.post("https://auth.roblox.com/v2/logout",headers=self.headers)
 
-        # TOOD: use json.loads/load
         if "x-csrf-token" in str(get_token.headers).lower():
             return get_token.headers["x-csrf-token"]
         else:
@@ -171,7 +170,7 @@ class RobloxAccount:
             data = fetchData.json()["data"]
             for asset in data:
                 if asset["itemType"] == "Asset":
-                   cached_assets.append(asset)
+                    cached_assets.append(asset)
 
         elif fetchData.status_code == 429:
             time.sleep(config.cfg_file["other"]["ratelimit_wait_time"] or 4)

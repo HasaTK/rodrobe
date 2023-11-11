@@ -1,13 +1,12 @@
-# RoDrobe 
+# RoDrobe
 Rodrobe is a discord roblox clothing bot for your group and  comes with many features which
 can be used to increase your income if used correctly
 
-![](https://cdn.discordapp.com/attachments/1154068857879793674/1155502142161956905/image.png)
 ## Features
-  - Clothing uploader 
+  - Clothing uploader
   - Group clothing stealer
-  - Auto robux to USD converter with configurable rates 
-     
+  - Auto robux to USD converter with configurable rates
+
     (Shows for every command with robux amount displayed + the sales notifier )
   - Clothing downloader
   - Watermark Remover
@@ -34,7 +33,7 @@ $ pip3 install -r requirements.txt
 [group]
 holder_cookie = "holder account cookie here"
 # dont use your main account or the uploader
-uploader_cookie = "uploader account cookie" 
+uploader_cookie = "uploader account cookie"
 # your group id
 group_id = 0
 
@@ -55,7 +54,7 @@ tshirt_price = 5
 
 # This checks if an asset has been cached by rodrobe.If the asset is cached then rodrobe will ignore the asset
 # This config only applies to the sgroup and scrape command.
-ignore_duplicates=true 
+ignore_duplicates=true
 
 [other]
 debug_mode=false
@@ -70,5 +69,5 @@ $ python3 main.py
 ```
 
 ## TODO:
-   - Make uploader & holder accounts global instead of initializing them repeatedly 
+   - Make uploader & holder accounts global instead of initializing them repeatedly
    - Script to clear cache

@@ -50,6 +50,13 @@ class Republish(commands.Cog):
 
                 await message.edit(embed=embed)
 
+        except InsufficientFundsException:
+            embed.title = "Insufficient Funds"
+            embed.color = config.EmbedColors.ERROR
+            embed.description = "The uploader account does not have enough robux to publish this asset"
+
+            await message.edit(embed=embed)
+
         except InvalidAssetId:
 
             embed.title = "Invalid Asset Id"
