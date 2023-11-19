@@ -33,7 +33,7 @@ def main():
 
     logger = logging.getLogger(__name__)
 
-    logger.info("Starting RoDrobe v1.01")
+    logger.info("Starting RoDrobe v1.5")
 
     if not os.path.isfile("config/description.txt"):
         logger.error("Create a text file called 'description' in the config folder. This file will be used when assets are being uploaded. ")
