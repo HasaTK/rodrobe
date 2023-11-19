@@ -9,7 +9,7 @@ logging.basicConfig(
     level=logging.DEBUG if cfg_file["other"]["debug_mode"] else logging.INFO,
     format="%(asctime)s:%(levelname)s:%(name)s: %(message)s",
     handlers=[
-        logging.FileHandler("rodrobe.log"),
+        logging.FileHandler("rodrobe.log",encoding="utf8"),
         logging.StreamHandler()
     ]
 )

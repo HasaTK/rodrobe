@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 import logging
@@ -218,7 +219,7 @@ class RobloxAccount:
 
         return release_request
 
-    def uploadGroupAsset(self, group_id: int, asset_type: str, asset_name: str, bin_file):
+    def uploadGroupAsset(self, group_id: int, asset_type: str, asset_name: str, asset_path):
 
         """ 
         Uploads an asset  to a group 
@@ -226,7 +227,7 @@ class RobloxAccount:
         :param int group_id:
         :param str asset_type:
         :param str asset_name:
-        :param bin_file: 
+        :param asset_path:
         """
 
         headers = self.headers
@@ -245,6 +246,8 @@ class RobloxAccount:
         with open("config/description.txt", "r") as file:
             description = file.read()
 
+        bin_file = open(asset_path, "rb")
+
         request_data = json.dumps({
             "displayName": asset_name,
             "description": description,
@@ -260,12 +263,14 @@ class RobloxAccount:
             headers=headers,
             files={"fileContent": (bin_file.name, bin_file, "image/png"), "request": (None, request_data)},
         )
-
+        bin_file.close()
         if "InsufficientFunds" in upload_req.text or "Failed to pay the associated fees" in upload_req.text:
             raise InsufficientFundsException(upload_req.json())
 
         elif "User is moderated" in upload_req.text:
             raise AccountTerminatedException("The account has been terminated")
+
+        os.remove(asset_path)
 
         while True:
             op_lookup = requests.get(

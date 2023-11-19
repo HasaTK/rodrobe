@@ -77,5 +77,6 @@ $ python3 main.py
 ```
 
 ## TODO:
+   - Proxy support
    - Make uploader & holder accounts global instead of initializing them repeatedly
    - Script to clear cache

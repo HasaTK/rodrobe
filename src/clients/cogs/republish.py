@@ -251,7 +251,7 @@ class Republish(commands.Cog):
                             pub_name = upload["response"]["displayName"]
                             upload_count += 1
 
-                            self.logger.info(f"Uploaded asset  of '{pub_name}' with id: {pub_id}")
+                            self.logger.info(f"Uploaded asset  of '{str(pub_name)}' with id: {pub_id}")
 
                             embed.title = "Last asset published"
                             embed.color = config.EmbedColors.INFO

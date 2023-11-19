@@ -71,7 +71,10 @@ class Monitor:
             params=params,
             headers=self.holder.headers
         )
+
         salesData= salesPage.json()["data"]
+        if not salesData:
+            return
 
         if salesData[0]["id"] == self.last_cached_id:
 

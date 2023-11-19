@@ -166,7 +166,7 @@ def republish_asset(
     else:
 
         asset = fetchAssetBytes(asset_id)
-        asset_path = "src/cache/assetdata/" + str(sha256(str(asset_id).encode("utf-8")).hexdigest()) + ".png"
+        asset_path = "src/cache/assetdata/" + sha256(str(uuid.uuid4()).encode("utf-8")).hexdigest()+".png"
 
         with open(asset_path, "wb") as file:
             file.write(asset["bytes"])
@@ -195,10 +195,8 @@ def republish_asset(
         group_id=cfg_file["group"]["group_id"],
         asset_type=asset_type,
         asset_name=asset_details["name"],
-        bin_file=open(asset_path, "rb"),
+        asset_path=asset_path,
     )
-
-    os.remove(asset_path)
 
     return republish
 
