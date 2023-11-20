@@ -72,11 +72,15 @@ class Monitor:
             headers=self.holder.headers
         )
 
+        if not "data" in salesPage.json():
+            return
+
         salesData= salesPage.json()["data"]
+
         if not salesData:
             return
 
-        if salesData[0]["id"] == self.last_cached_id:
+        if salesData[0]["idHash"] == self.last_cached_id:
 
             self.logger.debug("Checked for sales with 0 new sales found.")
             return 
@@ -86,8 +90,8 @@ class Monitor:
 
             for sale in salesData:
                 if sale["details"]["type"] == "Asset":
-                    if sale["id"] == self.last_cached_id:
-                        self.last_cached_id = salesData[0]["id"]
+                    if sale["idHash"] == self.last_cached_id:
+                        self.last_cached_id = salesData[0]["idHash"]
                         return 
 
                     rates = config.cfg_get("rates") or 3.5
@@ -148,7 +152,7 @@ class Monitor:
                             ]
                         })
 
-        self.last_cached_id = salesData[0]["id"]
+        self.last_cached_id = salesData[0]["idHash"]
 
     def load(self):
         """

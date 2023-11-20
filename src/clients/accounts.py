@@ -264,13 +264,31 @@ class RobloxAccount:
             files={"fileContent": (bin_file.name, bin_file, "image/png"), "request": (None, request_data)},
         )
         bin_file.close()
-        if "InsufficientFunds" in upload_req.text or "Failed to pay the associated fees" in upload_req.text:
+        os.remove(asset_path)
+
+        if upload_req.status_code == 429:
+            time.sleep(config.cfg_file["other"]["ratelimit_wait_time"] or 4)
+            return self.uploadGroupAsset(
+                group_id=group_id,
+                asset_type=asset_type,
+                asset_name=asset_name,
+                asset_path=asset_path
+            )
+
+        elif "InsufficientFunds" in upload_req.text or "Failed to pay the associated fees" in upload_req.text:
             raise InsufficientFundsException(upload_req.json())
 
         elif "User is moderated" in upload_req.text:
             raise AccountTerminatedException("The account has been terminated")
 
-        os.remove(asset_path)
+        elif "Asset name and description is fully moderated." in upload_req.text:
+            self.logger.error(upload_req.text)
+            return False
+
+        if not 'path' in upload_req.json():
+            self.logger.error(f"Error whilst attempting to upload asset - request dump:{upload_req.text}")
+
+            return False
 
         while True:
             op_lookup = requests.get(
