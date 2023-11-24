@@ -19,7 +19,7 @@ class Download(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.logger.info("Downlad cog is ready")
+        self.logger.info("Download cog is ready")
 
     @commands.command(help=f"Shows template of an asset")
     @commands.check(config.is_whitelisted)

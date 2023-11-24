@@ -76,7 +76,7 @@ class Monitor:
             return
 
         salesData= salesPage.json()["data"]
-
+        
         if not salesData:
             return
 
