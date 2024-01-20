@@ -7,19 +7,7 @@ from abc import ABC, abstractmethod
 from src.exceptions import InvalidWebhookException
 
 
-class AbstractWebhook(ABC):
-    # TODO: Add more platforms
-
-    @abstractmethod
-    def send(self, content: str):
-        pass
-
-    @abstractmethod
-    def raw_send(self, content):
-        pass
-
-
-class DiscordWebhook(AbstractWebhook):
+class DiscordWebhook:
     def __init__(
             self,
             webhook_url: Optional[str] = config.cfg_file["discord"]["sales_webhook"]

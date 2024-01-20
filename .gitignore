@@ -4,7 +4,9 @@ src/cache/*
 !src/cache/assetdata
 src/cache/assetdata/*
 !src/cache/assetdata/README.md
-description.txt
+config/*
+!config/.empty
+
 *.sample.png
 # Byte-compiled / optimized / DLL files
 __pycache__/

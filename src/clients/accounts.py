@@ -4,23 +4,24 @@ import json
 import logging
 import time
 
-from src                    import config
-from src.exceptions         import InvalidAssetType, InsufficientFundsException, AccountTerminatedException
+from src import config
+from src.exceptions import InvalidAssetType, InsufficientFundsException, AccountTerminatedException
 from typing import Optional, Dict, Any
 
 
 class RobloxAccount:
 
     def __init__(
-        self,
-        cookie,
-        user_agent: Optional[str] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
+            self,
+            cookie,
+            user_agent: Optional[
+                str] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0",
     ):
 
-        self.cookie     = ".ROBLOSECURITY="+cookie
-        self.user_id    =  None
+        self.cookie = ".ROBLOSECURITY=" + cookie
+        self.user_id = None
         self.user_agent = user_agent
-        self.headers    = {"User-Agent":self.user_agent, "Cookie": self.cookie}
+        self.headers = {"User-Agent": self.user_agent, "Cookie": self.cookie}
         self.logger = logging.getLogger(__name__)
         self.csrf_token = self.getCsrfToken()
         self.getClientInfo()
@@ -38,7 +39,7 @@ class RobloxAccount:
         try:
 
             self.user_id = client_info.json()["UserId"]
-            self.name    = client_info.json()["Name"]
+            self.name = client_info.json()["Name"]
 
             return {
                 "id": self.user_id,
@@ -65,7 +66,8 @@ class RobloxAccount:
         :rtype int:
         """
 
-        client_robux = requests.get(f"https://economy.roblox.com/v1/users/{self.user_id}/currency", headers=self.headers)
+        client_robux = requests.get(f"https://economy.roblox.com/v1/users/{self.user_id}/currency",
+                                    headers=self.headers)
         return client_robux.json()["robux"]
 
     def getAllGroups(self) -> Dict:
@@ -76,7 +78,8 @@ class RobloxAccount:
         :rtype dict:
         """
 
-        group_roles = requests.get(f"https://groups.roblox.com/v1/users/{self.user_id}/groups/roles", headers = self.headers)
+        group_roles = requests.get(f"https://groups.roblox.com/v1/users/{self.user_id}/groups/roles",
+                                   headers=self.headers)
         return group_roles.json()
 
     def checkIfInGroup(self, group_id: int) -> int | bool:
@@ -107,20 +110,19 @@ class RobloxAccount:
                 role_obj = group["role"]
 
                 if self.user_id == group_obj["owner"]["userId"]:
-                    return {"isOwner":True,"rank":role_obj["rank"]}
+                    return {"isOwner": True, "rank": role_obj["rank"]}
                 else:
-                    return {"isOwner":False,"rank":role_obj["rank"]}
+                    return {"isOwner": False, "rank": role_obj["rank"]}
         return None
 
     def getGroupSummary(self, group_id: int):
 
-
-        group_bal = requests.get(f"https://economy.roblox.com/v1/groups/{group_id}/currency",headers = self.headers)
-        summary = requests.get(f"https://economy.roblox.com/v1/groups/{group_id}/revenue/summary/day",headers = self.headers)
+        group_bal = requests.get(f"https://economy.roblox.com/v1/groups/{group_id}/currency", headers=self.headers)
+        summary = requests.get(f"https://economy.roblox.com/v1/groups/{group_id}/revenue/summary/day",
+                               headers=self.headers)
 
         if group_bal.ok and summary.ok:
-            return {"robux":group_bal.json()["robux"], "pending_robux": summary.json()["pendingRobux"]}
-
+            return {"robux": group_bal.json()["robux"], "pending_robux": summary.json()["pendingRobux"]}
 
     def getCsrfToken(self):
 
@@ -130,7 +132,7 @@ class RobloxAccount:
         :return token:
         """
 
-        get_token = requests.post("https://auth.roblox.com/v2/logout",headers=self.headers)
+        get_token = requests.post("https://auth.roblox.com/v2/logout", headers=self.headers)
 
         if "x-csrf-token" in str(get_token.headers).lower():
             return get_token.headers["x-csrf-token"]
@@ -154,12 +156,12 @@ class RobloxAccount:
         fetchData = requests.get(
             "https://catalog.roblox.com/v1/search/items",
             params={
-                "category":"Clothing",
-                "creatorTargetId":group_id,
-                "creatorType":"Group",
-                "cursor":cursor,
-                "limit":limit,
-                "sortOrder":"Desc"
+                "category": "Clothing",
+                "creatorTargetId": group_id,
+                "creatorType": "Group",
+                "cursor": cursor,
+                "limit": limit,
+                "sortOrder": "Desc"
             },
             headers=self.headers
         )
@@ -177,8 +179,7 @@ class RobloxAccount:
             time.sleep(config.cfg_file["other"]["ratelimit_wait_time"] or 4)
             return self.getGroupAssets(group_id=group_id, limit=limit, cursor=cursor)
 
-        return {"data":cached_assets,"obj":fetchData}
-
+        return {"data": cached_assets, "obj": fetchData}
 
     def releaseAsset(self, asset_id: int, price: int):
 
@@ -193,6 +194,7 @@ class RobloxAccount:
         headers = self.headers
         headers["x-csrf-token"] = self.csrf_token
 
+        self.logger.debug(f"ASSET {asset_id} PRICE: {price}")
         release_request = requests.post(
             url=f"https://itemconfiguration.roblox.com/v1/assets/{asset_id}/release",
             json={
@@ -201,7 +203,7 @@ class RobloxAccount:
                 },
                 "saleStatus": "OnSale",
                 "releaseConfiguration": {
-                    "saleAvailabilityLocations": [0,1]
+                    "saleAvailabilityLocations": [0, 1]
                 }
             },
             headers=headers
@@ -237,10 +239,11 @@ class RobloxAccount:
         headers["Origin"] = "create.roblox.com"
         headers["Referer"] = "https://create.roblox.com/"
 
-        if str(asset_type) not in ("Shirt","Pants","TShirt"):
+        if str(asset_type) not in ("Shirt", "Pants", "TShirt"):
             raise InvalidAssetType("Asset type provided is invalid. Double check capitalization")
         else:
-            rel_price = config.cfg_file["assets"]["tshirt_price"] if asset_type == "TShirt" else config.cfg_file["assets"]["item_price"]
+            rel_price = config.cfg_file["assets"]["tshirt_price"] if asset_type == "TShirt" else \
+            config.cfg_file["assets"]["item_price"]
             expectedPrice = 0 if asset_type == "TShirt" else 10
 
         with open("config/description.txt", "r") as file:
@@ -285,7 +288,7 @@ class RobloxAccount:
             self.logger.error(upload_req.text)
             return False
 
-        if not 'path' in upload_req.json():
+        if not 'path' in upload_req.text:
             self.logger.error(f"Error whilst attempting to upload asset - request dump:{upload_req.text}")
 
             return False
@@ -311,5 +314,3 @@ class RobloxAccount:
             else:
                 self.logger.error(op_lookup.text)
                 return False
-
-

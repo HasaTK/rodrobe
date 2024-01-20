@@ -33,7 +33,7 @@ def main():
 
     logger = logging.getLogger(__name__)
 
-    logger.info("Starting RoDrobe v1.5")
+    logger.info("Starting RoDrobe v1.6")
 
     if not os.path.isfile("config/description.txt"):
         with open("config/description.txt","a") as file:
